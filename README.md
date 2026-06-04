@@ -10,6 +10,15 @@ A local-first AI application knowledge graph for building a connected understand
 - Node detail panel with summary, tags, confidence, review status, sources, and relationship explanations.
 - Typed local graph data designed for future agent-assisted updates.
 - Project retrospective case studies extracted from BestCowork-GA and BestDEP-Lib git history.
+- Decoupled LearningAgent integration map for the previous personalized learning agent project.
+
+## LearningAgent Integration Architecture
+
+`learningAgent/` is treated as an independent Python learning engine, not as code mixed into the React graph frontend. The graph records its capabilities and future integration contracts while keeping runtime coupling behind REST/MCP adapter boundaries.
+
+<p align="center">
+  <img src="docs/images/fig7-learning-agent-integration.svg" alt="Fig 7. Decoupled LearningAgent Integration Architecture" width="100%"/>
+</p>
 
 ## Run Locally
 
@@ -36,6 +45,8 @@ src/components/              Sidebar, 3D graph, and detail panel
 src/styles/global.css        App styling
 tests/graph.test.ts          Core graph behavior tests
 docs/superpowers/            Design and implementation plan
+learningAgent/               Independent Python learning engine: RAG, memory, MCP, API
+integrations/                Reserved adapter boundary for future runtime coupling
 ```
 
 ## Future Agent Update Flow

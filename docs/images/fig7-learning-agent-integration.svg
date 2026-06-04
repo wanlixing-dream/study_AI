@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Fig. 7 LearningAgent Integration Architecture</title>
+  <desc id="desc">Scientific style architecture diagram showing Study AI knowledge graph, integration adapter, LearningAgent APIs, and LearningAgent internal learning engine modules.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L10,5.5 L0,11 Z" fill="#334155"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="9" refY="5.5" orient="auto">
+      <path d="M0,0 L10,5.5 L0,11 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .canvas { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #334155; stroke-width: 2; rx: 14; }
+      .subpanel { fill: #f1f5f9; stroke: #64748b; stroke-width: 1.5; rx: 10; }
+      .adapter { fill: #eff6ff; stroke: #2563eb; stroke-width: 2; rx: 12; }
+      .runtime { fill: #f0fdf4; stroke: #15803d; stroke-width: 2; rx: 12; }
+      .store { fill: #fff7ed; stroke: #c2410c; stroke-width: 2; rx: 12; }
+      .boundary { fill: none; stroke: #64748b; stroke-width: 2; stroke-dasharray: 10 8; rx: 18; }
+      .flow { fill: none; stroke: #334155; stroke-width: 2.2; marker-end: url(#arrow); }
+      .flowBlue { fill: none; stroke: #2563eb; stroke-width: 2.4; marker-end: url(#arrowBlue); }
+      .flowDashed { fill: none; stroke: #64748b; stroke-width: 2; stroke-dasharray: 7 7; marker-end: url(#arrow); }
+      .title { font: 700 30px Inter, Arial, sans-serif; fill: #0f172a; }
+      .subtitle { font: 500 15px Inter, Arial, sans-serif; fill: #475569; }
+      .label { font: 700 19px Inter, Arial, sans-serif; fill: #0f172a; }
+      .small { font: 500 14px Inter, Arial, sans-serif; fill: #334155; }
+      .tiny { font: 600 12px Inter, Arial, sans-serif; fill: #475569; }
+      .mono { font: 600 13px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #1e293b; }
+      .badge { fill: #e2e8f0; stroke: #94a3b8; stroke-width: 1; rx: 12; }
+      .badgeText { font: 700 12px Inter, Arial, sans-serif; fill: #334155; }
+      .num { fill: #1d4ed8; }
+      .numText { font: 800 13px Inter, Arial, sans-serif; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <rect class="canvas" width="1440" height="900"/>
+  <text x="72" y="68" class="title">Fig. 7. Decoupled LearningAgent Integration Architecture</text>
+  <text x="72" y="96" class="subtitle">Study AI visualizes and reviews knowledge; LearningAgent remains an independent learning engine exposed through stable API/MCP contracts.</text>
+
+  <rect x="54" y="130" width="418" height="640" class="boundary"/>
+  <text x="82" y="168" class="label">A. Study AI Knowledge Graph</text>
+  <text x="82" y="193" class="small">React + TypeScript local-first visualization</text>
+
+  <rect x="92" y="232" width="320" height="96" class="panel"/>
+  <text x="118" y="266" class="label">3D Graph Workspace</text>
+  <text x="118" y="293" class="small">concept nodes, learning paths, filters</text>
+
+  <rect x="92" y="370" width="320" height="96" class="panel"/>
+  <text x="118" y="404" class="label">Graph Data Layer</text>
+  <text x="118" y="431" class="mono">src/data/knowledgeGraph.ts</text>
+
+  <rect x="92" y="508" width="320" height="110" class="panel"/>
+  <text x="118" y="542" class="label">Human Review Surface</text>
+  <text x="118" y="569" class="small">approved / candidate / needs-review</text>
+  <text x="118" y="592" class="small">source + confidence preserved</text>
+
+  <rect x="540" y="214" width="360" height="424" class="adapter"/>
+  <text x="572" y="252" class="label">B. Integration Adapter</text>
+  <text x="572" y="279" class="small">future thin contract layer</text>
+
+  <rect x="584" y="324" width="272" height="72" class="subpanel"/>
+  <text x="608" y="354" class="label">Capability Mapping</text>
+  <text x="608" y="379" class="small">LearningAgent → graph nodes + edges</text>
+
+  <rect x="584" y="426" width="272" height="72" class="subpanel"/>
+  <text x="608" y="456" class="label">Candidate Updates</text>
+  <text x="608" y="481" class="small">summaries proposed, not auto-merged</text>
+
+  <rect x="584" y="528" width="272" height="72" class="subpanel"/>
+  <text x="608" y="558" class="label">Stable Contracts</text>
+  <text x="608" y="583" class="mono">REST / MCP / file exports</text>
+
+  <rect x="968" y="130" width="418" height="640" class="boundary"/>
+  <text x="996" y="168" class="label">C. LearningAgent Runtime</text>
+  <text x="996" y="193" class="small">independent Python learning engine</text>
+
+  <rect x="1010" y="232" width="152" height="82" class="runtime"/>
+  <text x="1031" y="265" class="label">REST API</text>
+  <text x="1031" y="291" class="mono">api/server.py</text>
+
+  <rect x="1192" y="232" width="152" height="82" class="runtime"/>
+  <text x="1214" y="265" class="label">MCP Server</text>
+  <text x="1214" y="291" class="mono">mcp_server/</text>
+
+  <rect x="1010" y="362" width="152" height="82" class="panel"/>
+  <text x="1031" y="395" class="label">Hybrid RAG</text>
+  <text x="1031" y="421" class="tiny">dense + BM25</text>
+
+  <rect x="1192" y="362" width="152" height="82" class="panel"/>
+  <text x="1214" y="395" class="label">Memory</text>
+  <text x="1214" y="421" class="tiny">entities + recency</text>
+
+  <rect x="1010" y="492" width="152" height="82" class="panel"/>
+  <text x="1031" y="525" class="label">Mastery</text>
+  <text x="1031" y="551" class="tiny">concept progress</text>
+
+  <rect x="1192" y="492" width="152" height="82" class="panel"/>
+  <text x="1214" y="525" class="label">Tracing</text>
+  <text x="1214" y="551" class="tiny">latency + quality</text>
+
+  <rect x="1068" y="642" width="220" height="74" class="store"/>
+  <text x="1092" y="672" class="label">Local Learning State</text>
+  <text x="1092" y="697" class="tiny">plans, notes, memory, traces</text>
+
+  <path d="M412 280 C468 280, 492 282, 540 332" class="flowBlue"/>
+  <circle cx="494" cy="297" r="13" class="num"/>
+  <text x="490" y="302" class="numText">1</text>
+  <text x="439" y="260" class="tiny">select learning-system node</text>
+
+  <path d="M900 360 C932 338, 954 305, 1010 274" class="flowBlue"/>
+  <path d="M900 380 C936 370, 1150 294, 1192 274" class="flowBlue"/>
+  <circle cx="940" cy="323" r="13" class="num"/>
+  <text x="936" y="328" class="numText">2</text>
+  <text x="910" y="282" class="tiny">contract call</text>
+
+  <path d="M1086 314 L1086 362" class="flow"/>
+  <path d="M1268 314 L1268 362" class="flow"/>
+  <path d="M1086 444 L1086 492" class="flow"/>
+  <path d="M1268 444 L1268 492" class="flow"/>
+  <path d="M1086 574 C1106 608, 1136 620, 1178 642" class="flow"/>
+  <path d="M1268 574 C1248 608, 1220 620, 1178 642" class="flow"/>
+
+  <path d="M1010 676 C946 682, 902 636, 856 564" class="flowDashed"/>
+  <circle cx="930" cy="658" r="13" class="num"/>
+  <text x="926" y="663" class="numText">3</text>
+  <text x="876" y="696" class="tiny">candidate insight</text>
+
+  <path d="M584 462 C520 462, 466 516, 412 560" class="flowDashed"/>
+  <circle cx="506" cy="498" r="13" class="num"/>
+  <text x="502" y="503" class="numText">4</text>
+  <text x="430" y="505" class="tiny">review before graph mutation</text>
+
+  <rect x="80" y="812" width="1280" height="48" class="badge"/>
+  <text x="104" y="842" class="badgeText">Design invariant:</text>
+  <text x="230" y="842" class="small">the graph can render without LearningAgent running; runtime capabilities enter through API/MCP adapters and human-reviewed graph updates.</text>
+</svg>
