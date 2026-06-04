@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { candidateKnowledge } from '../src/data/candidateKnowledge';
 import { knowledgeEdges, knowledgeNodes, learningPaths } from '../src/data/knowledgeGraph';
 import {
   getConnectedNodes,
@@ -102,5 +103,13 @@ describe('knowledge graph helpers', () => {
       type: 'git',
       commitHash: '38003b04'
     });
+  });
+
+  it('keeps agent-generated knowledge candidates separate from approved graph nodes', () => {
+    const candidate = candidateKnowledge.find((item) => item.id === 'candidate-auto-git-analysis-pipeline');
+
+    expect(candidate?.status).toBe('pending-review');
+    expect(candidate?.proposedNode.reviewStatus).toBe('candidate');
+    expect(knowledgeNodes.some((node) => node.id === candidate?.proposedNode.id)).toBe(false);
   });
 });
