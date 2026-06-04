@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { DetailDrawer } from './components/DetailDrawer';
 import { DetailPanel } from './components/DetailPanel';
 import { KnowledgeGraph3D } from './components/KnowledgeGraph3D';
 import { Sidebar } from './components/Sidebar';
@@ -12,6 +13,7 @@ export default function App() {
   const [activeTypes, setActiveTypes] = useState<Set<NodeType>>(new Set());
   const [selectedNodeId, setSelectedNodeId] = useState('rag');
   const [selectedPathId, setSelectedPathId] = useState('enterprise-rag');
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const selectedNode = knowledgeNodes.find((node) => node.id === selectedNodeId) ?? knowledgeNodes[0];
   const selectedPathNodes = getLearningPathNodes(selectedPathId, learningPaths, knowledgeNodes);
@@ -43,6 +45,7 @@ export default function App() {
 
   function selectNode(node: KnowledgeNode) {
     setSelectedNodeId(node.id);
+    setIsDetailOpen(true);
   }
 
   return (
@@ -84,6 +87,12 @@ export default function App() {
         />
         <DetailPanel node={selectedNode} connectedNodes={connectedNodes} />
       </section>
+      <DetailDrawer
+        connectedNodes={connectedNodes}
+        isOpen={isDetailOpen}
+        node={selectedNode}
+        onClose={() => setIsDetailOpen(false)}
+      />
     </main>
   );
 }

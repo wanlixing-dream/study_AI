@@ -24,6 +24,9 @@ export function DetailPanel({ node, connectedNodes }: DetailPanelProps) {
       </div>
       <h2>{node.title}</h2>
       <p className="summary">{node.summary}</p>
+      {node.detail ? (
+        <p className="detail-hint">Click the node again or a learning path item to open the full research detail.</p>
+      ) : null}
 
       <div className="tag-list">
         {node.tags.map((tag) => (
