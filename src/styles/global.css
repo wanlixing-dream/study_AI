@@ -68,7 +68,7 @@ h1 {
 
 .metric-strip {
   display: grid;
-  grid-template-columns: repeat(5, minmax(76px, 1fr));
+  grid-template-columns: repeat(6, minmax(76px, 1fr));
   gap: 8px;
 }
 
@@ -206,6 +206,11 @@ select:focus {
 .engineering,
 .dot.engineering {
   background: #c4b5fd;
+}
+
+.case-study,
+.dot.case-study {
+  background: #fb7185;
 }
 
 .path-description {

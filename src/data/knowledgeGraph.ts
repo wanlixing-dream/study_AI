@@ -1,4 +1,4 @@
-export type NodeType = 'company' | 'model' | 'technique' | 'scenario' | 'engineering';
+export type NodeType = 'company' | 'model' | 'technique' | 'scenario' | 'engineering' | 'case-study';
 export type ReviewStatus = 'approved' | 'candidate' | 'needs-review';
 export type LearningStatus = 'new' | 'learning' | 'reviewed';
 
@@ -245,6 +245,126 @@ export const knowledgeNodes: KnowledgeNode[] = [
     reviewStatus: 'approved',
     learningStatus: 'new',
     updatedAt: '2026-06-03'
+  },
+  {
+    id: 'case-skill-builder-blank-screen',
+    title: 'Skill Builder Blank Screen',
+    type: 'case-study',
+    summary: 'BestCowork-GA fixed a Skill Builder blank screen by tracing UI state flow: handleShowSkillBuilder did not set skillBuilderActive, and CoworkView passed onCreateSkill into the wrong open-builder callback.',
+    tags: ['BestCowork-GA', 'skill-builder', 'ui-state', 'callback-wiring'],
+    source: 'BestCowork-GA git commit 38003b04, 2026-06-02',
+    confidence: 0.92,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-installed-skill-delete-state',
+    title: 'Installed Skill Delete State',
+    type: 'case-study',
+    summary: 'BestCowork-GA fixed an installed-skill delete button that appeared unresponsive because the skills:delete handler returned after LibreFang uninstall success before local state cleanup, notification, and frontend list refresh.',
+    tags: ['BestCowork-GA', 'skill-lifecycle', 'state-sync', 'ipc'],
+    source: 'BestCowork-GA git commit 291e2291, 2026-06-02',
+    confidence: 0.91,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-group-chat-room-isolation',
+    title: 'Group Chat Room Isolation',
+    type: 'case-study',
+    summary: 'BestCowork-GA fixed cross-room message leakage by making groupChatSlice actions accept roomId, binding GroupChatView messages to the active room, and adding room-isolation regression tests.',
+    tags: ['BestCowork-GA', 'group-chat', 'state-isolation', 'regression-test'],
+    source: 'BestCowork-GA git commit 969cbfd0, 2026-06-02',
+    confidence: 0.93,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-agent-memory-two-layer',
+    title: 'Two-Layer Group Chat Memory',
+    type: 'case-study',
+    summary: 'BestCowork-GA introduced a two-layer memory pattern for group chat: inject the latest six turns as short-term context, persist L4 memory, and summarize every six rounds.',
+    tags: ['BestCowork-GA', 'agent-memory', 'group-chat', 'summarization'],
+    source: 'BestCowork-GA git commit 42e7757a, 2026-06-01',
+    confidence: 0.88,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-lan-dep-discovery-cache',
+    title: 'LAN DEP Discovery Cache',
+    type: 'case-study',
+    summary: 'BestCowork-GA fixed local-network DEP selection by preventing option 4 from reusing stale DEP cache and limiting discovery to LAN DEP instances.',
+    tags: ['BestCowork-GA', 'lan', 'service-discovery', 'cache-invalidation'],
+    source: 'BestCowork-GA git commits d5a4b4d9 and 3c6ea7e8, 2026-06-01',
+    confidence: 0.89,
+    reviewStatus: 'approved',
+    learningStatus: 'new',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-bestdep-startup-hang',
+    title: 'Startup Health Check Hang',
+    type: 'case-study',
+    summary: 'BestDEP-Lib fixed a menu startup hang by adding -m 5 timeout limits to curl health checks in bestdep.sh, preventing unavailable services from blocking startup indefinitely.',
+    tags: ['BestDEP-Lib', 'startup', 'health-check', 'shell-script'],
+    source: 'BestDEP-Lib git commit 62db549, 2026-05-27',
+    confidence: 0.94,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-bestdep-cpu-spike',
+    title: 'High Concurrency CPU Spike',
+    type: 'case-study',
+    summary: 'BestDEP-Lib fixed server CPU reaching 100 percent under high concurrency by debouncing saveStore, simplifying health checks, and caching provider metadata.',
+    tags: ['BestDEP-Lib', 'performance', 'concurrency', 'cache'],
+    source: 'BestDEP-Lib git commit 852cc92, 2026-05-27',
+    confidence: 0.93,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-auth-seed-db-clean-deploy',
+    title: 'Clean Deploy Auth Seed DB',
+    type: 'case-study',
+    summary: 'BestDEP-Lib fixed clean deployment data loss by packaging auth.db, preserving required data files in package.json and .gitignore, and copying data-seed/auth-seed.db when no database exists.',
+    tags: ['BestDEP-Lib', 'clean-deploy', 'seed-data', 'packaging'],
+    source: 'BestDEP-Lib git commits 6402929, 264d175, 2d69cc3, 513dd01, 2026-05-17',
+    confidence: 0.9,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-wiki-soft-delete-recreate',
+    title: 'Wiki Soft Delete Recreate',
+    type: 'case-study',
+    summary: 'BestDEP-Lib fixed help-document categories and articles not reappearing after soft delete and recreation, showing that CRUD flows need uniqueness rules that account for deleted records.',
+    tags: ['BestDEP-Lib', 'wiki', 'soft-delete', 'crud'],
+    source: 'BestDEP-Lib git commits d3eccba and d3e8f19, 2026-05-18',
+    confidence: 0.88,
+    reviewStatus: 'approved',
+    learningStatus: 'new',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'case-skill-visibility-permission',
+    title: 'Skill Visibility Permission Mismatch',
+    type: 'case-study',
+    summary: 'BestDEP-Lib fixed inconsistent skill visibility and download permission behavior, a practical reminder that UI visibility, API authorization, and download policy must share one policy source.',
+    tags: ['BestDEP-Lib', 'skills', 'rbac', 'policy'],
+    source: 'BestDEP-Lib git commit 4911868, 2026-05-19',
+    confidence: 0.87,
+    reviewStatus: 'approved',
+    learningStatus: 'new',
+    updatedAt: '2026-06-04'
   }
 ];
 
@@ -264,7 +384,17 @@ export const knowledgeEdges: KnowledgeEdge[] = [
   { source: 'deployment', target: 'cost-latency', label: 'balances', explanation: 'Production deployment decisions must balance user experience, model cost, and latency.' },
   { source: 'mcp', target: 'agent-workflow', label: 'connects tools', explanation: 'MCP can make agent workflows more modular by exposing tools and resources consistently.' },
   { source: 'agent-workflow', target: 'customer-service', label: 'automates', explanation: 'Support agents combine retrieval, tool calls, escalation, and policy constraints.' },
-  { source: 'customer-service', target: 'evaluation', label: 'monitored by', explanation: 'Customer-facing AI needs quality, safety, tone, and escalation evaluation.' }
+  { source: 'customer-service', target: 'evaluation', label: 'monitored by', explanation: 'Customer-facing AI needs quality, safety, tone, and escalation evaluation.' },
+  { source: 'case-skill-builder-blank-screen', target: 'agent-workflow', label: 'debugs builder flow', explanation: 'Agent-facing builders need explicit state transitions and correctly wired callbacks.' },
+  { source: 'case-installed-skill-delete-state', target: 'mcp', label: 'cleans tool lifecycle', explanation: 'Tool and skill lifecycle operations must update remote runtime and local UI state consistently.' },
+  { source: 'case-group-chat-room-isolation', target: 'evaluation', label: 'validated by regression', explanation: 'Room isolation is a state-boundary problem that should be protected with regression tests.' },
+  { source: 'case-agent-memory-two-layer', target: 'agent-workflow', label: 'adds memory pattern', explanation: 'Short-term context and persisted summaries solve different parts of agent memory.' },
+  { source: 'case-lan-dep-discovery-cache', target: 'deployment', label: 'fixes environment routing', explanation: 'Local and remote DEP discovery need explicit cache invalidation and environment boundaries.' },
+  { source: 'case-bestdep-startup-hang', target: 'deployment', label: 'hardens startup', explanation: 'Health checks in startup scripts need timeouts so missing services do not block operators.' },
+  { source: 'case-bestdep-cpu-spike', target: 'cost-latency', label: 'reduces pressure', explanation: 'Debouncing writes, lighter health checks, and provider caching reduce production load.' },
+  { source: 'case-auth-seed-db-clean-deploy', target: 'deployment', label: 'packages seeds', explanation: 'Clean deployments need packaged seed data and deterministic database initialization.' },
+  { source: 'case-wiki-soft-delete-recreate', target: 'enterprise-knowledge-base', label: 'repairs content lifecycle', explanation: 'Knowledge base CRUD logic must handle soft-deleted records during recreate flows.' },
+  { source: 'case-skill-visibility-permission', target: 'mcp', label: 'aligns permissions', explanation: 'Skill visibility and executable/download permission should resolve through one policy model.' }
 ];
 
 export const learningPaths: LearningPath[] = [
@@ -285,6 +415,18 @@ export const learningPaths: LearningPath[] = [
     title: 'Model Selection Map',
     description: 'Compare vendors, foundation model families, and practical cost-performance constraints.',
     nodeIds: ['openai', 'anthropic', 'google-deepmind', 'meta-ai', 'deepseek', 'foundation-models', 'cost-latency']
+  },
+  {
+    id: 'project-retrospective',
+    title: 'Project Retrospective',
+    description: 'Real engineering lessons extracted from BestCowork-GA and BestDEP-Lib git history.',
+    nodeIds: [
+      'case-skill-builder-blank-screen',
+      'case-installed-skill-delete-state',
+      'case-group-chat-room-isolation',
+      'case-bestdep-startup-hang',
+      'case-bestdep-cpu-spike',
+      'case-auth-seed-db-clean-deploy'
+    ]
   }
 ];
-

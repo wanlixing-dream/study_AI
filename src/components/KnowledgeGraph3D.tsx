@@ -20,7 +20,8 @@ const nodeColors: Record<NodeType, string> = {
   model: '#facc15',
   technique: '#a7f3d0',
   scenario: '#f9a8d4',
-  engineering: '#c4b5fd'
+  engineering: '#c4b5fd',
+  'case-study': '#fb7185'
 };
 
 export function KnowledgeGraph3D({

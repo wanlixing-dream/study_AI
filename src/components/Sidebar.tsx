@@ -18,7 +18,8 @@ const typeLabels: Record<NodeType, string> = {
   model: 'Models',
   technique: 'Techniques',
   scenario: 'Scenarios',
-  engineering: 'Engineering'
+  engineering: 'Engineering',
+  'case-study': 'Case Studies'
 };
 
 export function Sidebar({
@@ -87,4 +88,3 @@ export function Sidebar({
     </aside>
   );
 }
-

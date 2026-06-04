@@ -9,6 +9,7 @@ A local-first AI application knowledge graph for building a connected understand
 - Learning paths for enterprise RAG, agent internship fundamentals, and model selection.
 - Node detail panel with summary, tags, confidence, review status, sources, and relationship explanations.
 - Typed local graph data designed for future agent-assisted updates.
+- Project retrospective case studies extracted from BestCowork-GA and BestDEP-Lib git history.
 
 ## Run Locally
 
@@ -50,3 +51,10 @@ A future agent workflow can:
 5. Write approved updates back into the graph data.
 
 Human review remains the gate before the knowledge graph changes.
+
+## Project Retrospectives
+
+The graph includes a `case-study` layer for real engineering lessons. Current examples come from:
+
+- `BestCowork-GA`: Skill Builder state bugs, skill lifecycle cleanup, group chat room isolation, agent memory, LAN DEP discovery.
+- `BestDEP-Lib`: startup health-check hangs, high-concurrency CPU pressure, clean-deploy seed databases, Wiki soft-delete recreation, skill permission alignment.

@@ -63,7 +63,8 @@ export function getNodeTypeCounts(nodes: KnowledgeNode[]): Record<NodeType, numb
       model: 0,
       technique: 0,
       scenario: 0,
-      engineering: 0
+      engineering: 0,
+      'case-study': 0
     }
   );
 }

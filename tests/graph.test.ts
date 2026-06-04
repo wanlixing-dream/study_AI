@@ -45,5 +45,28 @@ describe('knowledge graph helpers', () => {
     expect(counts.company).toBeGreaterThanOrEqual(5);
     expect(counts.technique).toBeGreaterThanOrEqual(5);
     expect(counts.engineering).toBeGreaterThanOrEqual(3);
+    expect(counts['case-study']).toBeGreaterThanOrEqual(8);
+  });
+
+  it('searches real project lessons extracted from git history', () => {
+    const nodes = searchAndFilterNodes(knowledgeNodes, {
+      query: 'skill builder blank screen',
+      activeTypes: new Set(['case-study'])
+    });
+
+    expect(nodes.map((node) => node.id)).toEqual(['case-skill-builder-blank-screen']);
+  });
+
+  it('resolves project retrospective path from git-derived lessons', () => {
+    const pathNodes = getLearningPathNodes('project-retrospective', learningPaths, knowledgeNodes);
+
+    expect(pathNodes.map((node) => node.id)).toEqual([
+      'case-skill-builder-blank-screen',
+      'case-installed-skill-delete-state',
+      'case-group-chat-room-isolation',
+      'case-bestdep-startup-hang',
+      'case-bestdep-cpu-spike',
+      'case-auth-seed-db-clean-deploy'
+    ]);
   });
 });

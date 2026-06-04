@@ -11,7 +11,8 @@ const typeLabels: Record<NodeType, string> = {
   model: 'Model',
   technique: 'Technique',
   scenario: 'Scenario',
-  engineering: 'Engineering'
+  engineering: 'Engineering',
+  'case-study': 'Case Study'
 };
 
 export function DetailPanel({ node, connectedNodes }: DetailPanelProps) {
@@ -62,4 +63,3 @@ export function DetailPanel({ node, connectedNodes }: DetailPanelProps) {
     </aside>
   );
 }
-

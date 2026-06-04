@@ -5,7 +5,7 @@ import { Sidebar } from './components/Sidebar';
 import { knowledgeEdges, knowledgeNodes, learningPaths, type KnowledgeNode, type NodeType } from './data/knowledgeGraph';
 import { getConnectedNodes, getLearningPathNodes, getNodeTypeCounts, getVisibleGraph } from './lib/graph';
 
-const allNodeTypes: NodeType[] = ['company', 'model', 'technique', 'scenario', 'engineering'];
+const allNodeTypes: NodeType[] = ['company', 'model', 'technique', 'scenario', 'engineering', 'case-study'];
 
 export default function App() {
   const [query, setQuery] = useState('');
@@ -87,4 +87,3 @@ export default function App() {
     </main>
   );
 }
-
