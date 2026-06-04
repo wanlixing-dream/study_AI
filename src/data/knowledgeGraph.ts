@@ -365,6 +365,78 @@ export const knowledgeNodes: KnowledgeNode[] = [
     reviewStatus: 'approved',
     learningStatus: 'new',
     updatedAt: '2026-06-04'
+  },
+  {
+    id: 'learning-agent-system',
+    title: 'LearningAgent System',
+    type: 'case-study',
+    summary: 'A decoupled personalized learning engine with CLI, REST API, MCP server, hybrid RAG, multi-scope memory, mastery tracking, and tracing. It should connect to Study AI through stable adapter contracts instead of being merged into the React graph frontend.',
+    tags: ['LearningAgent', 'personalized learning engine', 'decoupled-module', 'workspace-integration'],
+    source: 'learningAgent/README.md and docs/plans/2025-01-09-learningagent-design.md',
+    confidence: 0.94,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'learning-agent-hybrid-rag',
+    title: 'LearningAgent Hybrid RAG',
+    type: 'case-study',
+    summary: 'LearningAgent combines dense embedding retrieval with sparse BM25 retrieval, score fusion, markdown-aware chunking, and vector persistence for learning-context injection.',
+    tags: ['LearningAgent', 'hybrid-rag', 'bm25', 'embedding', 'chunking'],
+    source: 'learningAgent/core/rag and learningAgent/README.md',
+    confidence: 0.92,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'learning-agent-memory',
+    title: 'LearningAgent Multi-Scope Memory',
+    type: 'case-study',
+    summary: 'LearningAgent stores long-term learning memory with entity extraction, importance, recency, semantic retrieval, and fallback retrieval when embedding services are unavailable.',
+    tags: ['LearningAgent', 'memory', 'entity-extraction', 'retrieval'],
+    source: 'learningAgent/core/memory_* and learningAgent/README.md',
+    confidence: 0.91,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'learning-agent-mastery',
+    title: 'LearningAgent Mastery Tracking',
+    type: 'case-study',
+    summary: 'LearningAgent tracks concept-level mastery, confidence, attempts, weak concepts, and review timing so learning can adapt to user progress instead of staying as static notes.',
+    tags: ['LearningAgent', 'adaptive-learning', 'mastery', 'spaced-review'],
+    source: 'learningAgent/core/mastery_tracker.py and learningAgent/api/server.py',
+    confidence: 0.91,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'learning-agent-mcp',
+    title: 'LearningAgent MCP Interface',
+    type: 'case-study',
+    summary: 'LearningAgent exposes learning domains, plans, progress summaries, memory search, knowledge notes, weak concepts, and mastery updates through a FastMCP server.',
+    tags: ['LearningAgent', 'mcp', 'tools', 'resources', 'prompts'],
+    source: 'learningAgent/mcp_server/server.py',
+    confidence: 0.93,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
+  },
+  {
+    id: 'learning-agent-observability',
+    title: 'LearningAgent Observability',
+    type: 'case-study',
+    summary: 'LearningAgent records traces, latency, intent, agent execution, and deterministic evaluation signals, allowing learning workflows to be inspected rather than treated as opaque chat.',
+    tags: ['LearningAgent', 'observability', 'tracing', 'evaluation'],
+    source: 'learningAgent/core/tracing.py, learningAgent/core/evaluation.py, learningAgent/api/server.py',
+    confidence: 0.9,
+    reviewStatus: 'approved',
+    learningStatus: 'learning',
+    updatedAt: '2026-06-04'
   }
 ];
 
@@ -394,7 +466,20 @@ export const knowledgeEdges: KnowledgeEdge[] = [
   { source: 'case-bestdep-cpu-spike', target: 'cost-latency', label: 'reduces pressure', explanation: 'Debouncing writes, lighter health checks, and provider caching reduce production load.' },
   { source: 'case-auth-seed-db-clean-deploy', target: 'deployment', label: 'packages seeds', explanation: 'Clean deployments need packaged seed data and deterministic database initialization.' },
   { source: 'case-wiki-soft-delete-recreate', target: 'enterprise-knowledge-base', label: 'repairs content lifecycle', explanation: 'Knowledge base CRUD logic must handle soft-deleted records during recreate flows.' },
-  { source: 'case-skill-visibility-permission', target: 'mcp', label: 'aligns permissions', explanation: 'Skill visibility and executable/download permission should resolve through one policy model.' }
+  { source: 'case-skill-visibility-permission', target: 'mcp', label: 'aligns permissions', explanation: 'Skill visibility and executable/download permission should resolve through one policy model.' },
+  { source: 'learning-agent-system', target: 'agent-workflow', label: 'implements', explanation: 'LearningAgent is a concrete learning-oriented agent workflow with routing, tools, memory, and evaluation.' },
+  { source: 'learning-agent-system', target: 'learning-agent-hybrid-rag', label: 'contains', explanation: 'The system uses hybrid retrieval to ground learning answers and summaries.' },
+  { source: 'learning-agent-system', target: 'learning-agent-memory', label: 'contains', explanation: 'The system keeps multi-scope learning memory so user progress accumulates across sessions.' },
+  { source: 'learning-agent-system', target: 'learning-agent-mastery', label: 'contains', explanation: 'Mastery tracking converts sessions into measurable learning state.' },
+  { source: 'learning-agent-system', target: 'learning-agent-mcp', label: 'exposes', explanation: 'The MCP server is the cleanest future integration contract for external agents and tools.' },
+  { source: 'learning-agent-system', target: 'learning-agent-observability', label: 'observed by', explanation: 'Tracing and evaluation make the learning agent inspectable and debuggable.' },
+  { source: 'learning-agent-hybrid-rag', target: 'rag', label: 'concretizes', explanation: 'LearningAgent is a runnable example of RAG applied to personal learning context.' },
+  { source: 'learning-agent-hybrid-rag', target: 'embedding', label: 'uses', explanation: 'Dense retrieval depends on embeddings for semantic similarity search.' },
+  { source: 'learning-agent-hybrid-rag', target: 'vector-db', label: 'persists in', explanation: 'Vector persistence allows notes and chunks to be reused across learning sessions.' },
+  { source: 'learning-agent-memory', target: 'agent-workflow', label: 'adds continuity', explanation: 'Memory retrieval gives the agent continuity beyond the current prompt.' },
+  { source: 'learning-agent-mastery', target: 'evaluation', label: 'measures learning', explanation: 'Concept mastery is a domain-specific evaluation signal for adaptive learning.' },
+  { source: 'learning-agent-mcp', target: 'mcp', label: 'implements', explanation: 'LearningAgent exposes its learning capabilities through MCP tools, resources, and prompts.' },
+  { source: 'learning-agent-observability', target: 'evaluation', label: 'supports', explanation: 'Trace and score records make agent behavior measurable and reviewable.' }
 ];
 
 export const learningPaths: LearningPath[] = [
@@ -427,6 +512,19 @@ export const learningPaths: LearningPath[] = [
       'case-bestdep-startup-hang',
       'case-bestdep-cpu-spike',
       'case-auth-seed-db-clean-deploy'
+    ]
+  },
+  {
+    id: 'learning-agent-integration',
+    title: 'LearningAgent Integration',
+    description: 'How the previous LearningAgent project connects to the Study AI graph as a decoupled learning engine.',
+    nodeIds: [
+      'learning-agent-system',
+      'learning-agent-hybrid-rag',
+      'learning-agent-memory',
+      'learning-agent-mastery',
+      'learning-agent-mcp',
+      'learning-agent-observability'
     ]
   }
 ];

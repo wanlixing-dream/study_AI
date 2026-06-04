@@ -69,4 +69,26 @@ describe('knowledge graph helpers', () => {
       'case-auth-seed-db-clean-deploy'
     ]);
   });
+
+  it('searches the decoupled LearningAgent integration node', () => {
+    const nodes = searchAndFilterNodes(knowledgeNodes, {
+      query: 'personalized learning engine',
+      activeTypes: new Set(['case-study'])
+    });
+
+    expect(nodes.map((node) => node.id)).toEqual(['learning-agent-system']);
+  });
+
+  it('resolves the LearningAgent integration path', () => {
+    const pathNodes = getLearningPathNodes('learning-agent-integration', learningPaths, knowledgeNodes);
+
+    expect(pathNodes.map((node) => node.id)).toEqual([
+      'learning-agent-system',
+      'learning-agent-hybrid-rag',
+      'learning-agent-memory',
+      'learning-agent-mastery',
+      'learning-agent-mcp',
+      'learning-agent-observability'
+    ]);
+  });
 });
