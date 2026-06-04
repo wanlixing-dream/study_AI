@@ -2,6 +2,23 @@ export type NodeType = 'company' | 'model' | 'technique' | 'scenario' | 'enginee
 export type ReviewStatus = 'approved' | 'candidate' | 'needs-review';
 export type LearningStatus = 'new' | 'learning' | 'reviewed';
 
+export type KnowledgeEvidence = {
+  type: 'git' | 'web' | 'manual' | 'code';
+  title: string;
+  urlOrPath: string;
+  commitHash?: string;
+  date?: string;
+};
+
+export type KnowledgeDetail = {
+  problem?: string;
+  rootCause?: string;
+  solution?: string;
+  engineeringLesson?: string;
+  relatedFrontierTech?: string[];
+  evidence: KnowledgeEvidence[];
+};
+
 export type KnowledgeNode = {
   id: string;
   title: string;
@@ -13,6 +30,7 @@ export type KnowledgeNode = {
   reviewStatus: ReviewStatus;
   learningStatus: LearningStatus;
   updatedAt: string;
+  detail?: KnowledgeDetail;
 };
 
 export type KnowledgeEdge = {
@@ -256,7 +274,23 @@ export const knowledgeNodes: KnowledgeNode[] = [
     confidence: 0.92,
     reviewStatus: 'approved',
     learningStatus: 'learning',
-    updatedAt: '2026-06-04'
+    updatedAt: '2026-06-04',
+    detail: {
+      problem: 'Clicking into Skill Builder produced a blank screen, so users could see an entry point but could not reach the builder workflow.',
+      rootCause: 'The UI state transition was incomplete: handleShowSkillBuilder did not set skillBuilderActive, and CoworkView passed the wrong callback prop into the open-builder path.',
+      solution: 'Wire the correct onOpenSkillBuilder callback and set skillBuilderActive during the open action so the routed builder state and rendered view agree.',
+      engineeringLesson: 'Agent builder flows need explicit state-machine thinking. When a UI entry point opens a multi-step agent workflow, route state, active flags, and callback names should be tested together.',
+      relatedFrontierTech: ['agent workflow state machines', 'human-in-the-loop builder UX', 'tool lifecycle orchestration'],
+      evidence: [
+        {
+          type: 'git',
+          title: 'Fix Skill Builder blank screen',
+          urlOrPath: '/Users/wlx/Desktop/wlx/BestCowork-GA',
+          commitHash: '38003b04',
+          date: '2026-06-02'
+        }
+      ]
+    }
   },
   {
     id: 'case-installed-skill-delete-state',
@@ -268,7 +302,23 @@ export const knowledgeNodes: KnowledgeNode[] = [
     confidence: 0.91,
     reviewStatus: 'approved',
     learningStatus: 'learning',
-    updatedAt: '2026-06-04'
+    updatedAt: '2026-06-04',
+    detail: {
+      problem: 'The installed-skill delete button looked unresponsive after LibreFang uninstall succeeded.',
+      rootCause: 'The handler returned too early after remote uninstall and skipped local deleteSkill cleanup, notification, and frontend list refresh.',
+      solution: 'Always complete local cleanup and notification after the remote lifecycle operation, even when the remote uninstall succeeds early.',
+      engineeringLesson: 'Remote tool lifecycle and local UI state must be treated as a two-phase operation. Success in the runtime is not success in the product until local state and user feedback are synchronized.',
+      relatedFrontierTech: ['MCP tool lifecycle', 'agent tool registries', 'runtime-to-UI state synchronization'],
+      evidence: [
+        {
+          type: 'git',
+          title: 'Fix installed skill delete state synchronization',
+          urlOrPath: '/Users/wlx/Desktop/wlx/BestCowork-GA',
+          commitHash: '291e2291',
+          date: '2026-06-02'
+        }
+      ]
+    }
   },
   {
     id: 'case-group-chat-room-isolation',
@@ -280,7 +330,23 @@ export const knowledgeNodes: KnowledgeNode[] = [
     confidence: 0.93,
     reviewStatus: 'approved',
     learningStatus: 'learning',
-    updatedAt: '2026-06-04'
+    updatedAt: '2026-06-04',
+    detail: {
+      problem: 'Group chat messages could leak across rooms or be displayed against the wrong active room context.',
+      rootCause: 'Message actions were not consistently scoped by roomId, so shared state updates could target the wrong room.',
+      solution: 'Make groupChatSlice actions accept roomId, bind GroupChatView messages to the active room, and add regression tests for room isolation.',
+      engineeringLesson: 'Multi-agent chat products need strict conversation boundaries. Room, session, user, and agent IDs should be part of every write path and every regression test.',
+      relatedFrontierTech: ['multi-agent conversation state', 'session isolation', 'agent memory scoping'],
+      evidence: [
+        {
+          type: 'git',
+          title: 'Fix group chat room isolation',
+          urlOrPath: '/Users/wlx/Desktop/wlx/BestCowork-GA',
+          commitHash: '969cbfd0',
+          date: '2026-06-02'
+        }
+      ]
+    }
   },
   {
     id: 'case-agent-memory-two-layer',
@@ -316,7 +382,23 @@ export const knowledgeNodes: KnowledgeNode[] = [
     confidence: 0.94,
     reviewStatus: 'approved',
     learningStatus: 'learning',
-    updatedAt: '2026-06-04'
+    updatedAt: '2026-06-04',
+    detail: {
+      problem: 'The bestdep.sh menu could hang during startup when a service health check did not return.',
+      rootCause: 'curl health checks had no timeout, so unavailable endpoints could block an operator-facing startup flow indefinitely.',
+      solution: 'Add a bounded curl timeout with -m 5 to every startup health check.',
+      engineeringLesson: 'Production startup checks must be bounded. Health checks should inform startup decisions, not become a new availability dependency.',
+      relatedFrontierTech: ['agent runtime operations', 'deployment health checks', 'resilient tool servers'],
+      evidence: [
+        {
+          type: 'git',
+          title: 'Add timeouts to bestdep.sh health checks',
+          urlOrPath: '/Users/wlx/Desktop/wlx/BestDEP-Lib',
+          commitHash: '62db549',
+          date: '2026-05-27'
+        }
+      ]
+    }
   },
   {
     id: 'case-bestdep-cpu-spike',
@@ -328,7 +410,23 @@ export const knowledgeNodes: KnowledgeNode[] = [
     confidence: 0.93,
     reviewStatus: 'approved',
     learningStatus: 'learning',
-    updatedAt: '2026-06-04'
+    updatedAt: '2026-06-04',
+    detail: {
+      problem: 'The server could reach 100 percent CPU under high concurrency.',
+      rootCause: 'Frequent saveStore writes, heavy health checks, and repeated provider metadata work amplified load during concurrent requests.',
+      solution: 'Debounce saveStore, make health checks lighter, and cache provider metadata.',
+      engineeringLesson: 'Agent platforms often look like chat products but behave like high-frequency orchestration systems. Persistence, health checks, and provider discovery need load-aware design.',
+      relatedFrontierTech: ['agent observability', 'provider routing cache', 'runtime backpressure'],
+      evidence: [
+        {
+          type: 'git',
+          title: 'Fix high concurrency CPU pressure',
+          urlOrPath: '/Users/wlx/Desktop/wlx/BestDEP-Lib',
+          commitHash: '852cc92',
+          date: '2026-05-27'
+        }
+      ]
+    }
   },
   {
     id: 'case-auth-seed-db-clean-deploy',
@@ -376,7 +474,22 @@ export const knowledgeNodes: KnowledgeNode[] = [
     confidence: 0.94,
     reviewStatus: 'approved',
     learningStatus: 'learning',
-    updatedAt: '2026-06-04'
+    updatedAt: '2026-06-04',
+    detail: {
+      problem: 'The previous learningAgent project contains useful learning-agent capabilities, but directly merging it into the React graph app would blur runtime boundaries.',
+      rootCause: 'It is a Python system with CLI, REST, MCP, memory, RAG, and tracing, while Study AI is currently a local-first React graph frontend.',
+      solution: 'Represent LearningAgent as graph knowledge and reserve adapter boundaries for future REST/MCP integration instead of importing private Python internals.',
+      engineeringLesson: 'A personal knowledge graph should model external systems before coupling to them. Architecture-level integration keeps learning value now and runtime options later.',
+      relatedFrontierTech: ['MCP', 'agent observability', 'hybrid RAG', 'adaptive learning'],
+      evidence: [
+        {
+          type: 'manual',
+          title: 'LearningAgent integration design',
+          urlOrPath: '/Users/wlx/Desktop/wlx/study_AI/docs/superpowers/specs/2026-06-04-learning-agent-integration-design.md',
+          date: '2026-06-04'
+        }
+      ]
+    }
   },
   {
     id: 'learning-agent-hybrid-rag',

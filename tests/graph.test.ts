@@ -91,4 +91,16 @@ describe('knowledge graph helpers', () => {
       'learning-agent-observability'
     ]);
   });
+
+  it('stores rich engineering detail for git-derived case studies', () => {
+    const node = knowledgeNodes.find((candidate) => candidate.id === 'case-skill-builder-blank-screen');
+
+    expect(node?.detail?.problem).toMatch(/blank screen/i);
+    expect(node?.detail?.rootCause).toMatch(/state/i);
+    expect(node?.detail?.solution).toMatch(/callback/i);
+    expect(node?.detail?.evidence[0]).toMatchObject({
+      type: 'git',
+      commitHash: '38003b04'
+    });
+  });
 });
