@@ -1,23 +1,18 @@
 import type { ConnectedNode } from '../lib/graph';
-import type { KnowledgeNode, NodeType } from '../data/knowledgeGraph';
+import type { KnowledgeNode } from '../data/knowledgeGraph';
+import { evidenceTypeLabels, getUiText, nodeTypeLabels, type Locale } from '../lib/i18n';
 
 type DetailDrawerProps = {
   node: KnowledgeNode;
   connectedNodes: ConnectedNode[];
   isOpen: boolean;
+  locale: Locale;
   onClose: () => void;
 };
 
-const typeLabels: Record<NodeType, string> = {
-  company: 'Company',
-  model: 'Model',
-  technique: 'Technique',
-  scenario: 'Scenario',
-  engineering: 'Engineering',
-  'case-study': 'Case Study'
-};
+export function DetailDrawer({ node, connectedNodes, isOpen, locale, onClose }: DetailDrawerProps) {
+  const text = getUiText(locale);
 
-export function DetailDrawer({ node, connectedNodes, isOpen, onClose }: DetailDrawerProps) {
   if (!isOpen) {
     return null;
   }
@@ -25,17 +20,17 @@ export function DetailDrawer({ node, connectedNodes, isOpen, onClose }: DetailDr
   return (
     <div className="drawer-backdrop" role="presentation" onClick={onClose}>
       <aside
-        aria-label={`${node.title} detail`}
+        aria-label={`${node.title} ${text.detailAriaSuffix}`}
         className="detail-drawer"
         role="dialog"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="drawer-header">
           <div>
-            <span className={`type-pill ${node.type}`}>{typeLabels[node.type]}</span>
+            <span className={`type-pill ${node.type}`}>{nodeTypeLabels[locale][node.type]}</span>
             <h2>{node.title}</h2>
           </div>
-          <button className="icon-button" type="button" aria-label="Close detail" onClick={onClose}>
+          <button className="icon-button" type="button" aria-label={text.closeDetail} onClick={onClose}>
             x
           </button>
         </div>
@@ -44,14 +39,14 @@ export function DetailDrawer({ node, connectedNodes, isOpen, onClose }: DetailDr
 
         {node.detail ? (
           <div className="detail-sections">
-            <DetailSection title="Problem" content={node.detail.problem} />
-            <DetailSection title="Root Cause" content={node.detail.rootCause} />
-            <DetailSection title="Solution" content={node.detail.solution} />
-            <DetailSection title="Engineering Lesson" content={node.detail.engineeringLesson} />
+            <DetailSection title={text.problem} content={node.detail.problem} />
+            <DetailSection title={text.rootCause} content={node.detail.rootCause} />
+            <DetailSection title={text.solution} content={node.detail.solution} />
+            <DetailSection title={text.engineeringLesson} content={node.detail.engineeringLesson} />
 
             {node.detail.relatedFrontierTech?.length ? (
               <section>
-                <h3>Related Frontier Tech</h3>
+                <h3>{text.relatedFrontierTech}</h3>
                 <div className="tag-list">
                   {node.detail.relatedFrontierTech.map((tech) => (
                     <span key={tech}>{tech}</span>
@@ -61,12 +56,12 @@ export function DetailDrawer({ node, connectedNodes, isOpen, onClose }: DetailDr
             ) : null}
 
             <section>
-              <h3>Evidence</h3>
+              <h3>{text.evidence}</h3>
               <div className="evidence-list">
                 {node.detail.evidence.map((item) => (
                   <article key={`${item.type}-${item.title}-${item.commitHash ?? item.urlOrPath}`}>
                     <strong>{item.title}</strong>
-                    <span>{item.type}{item.commitHash ? ` / ${item.commitHash}` : ''}</span>
+                    <span>{evidenceTypeLabels[locale][item.type] ?? item.type}{item.commitHash ? ` / ${item.commitHash}` : ''}</span>
                     <p>{item.urlOrPath}</p>
                   </article>
                 ))}
@@ -74,11 +69,11 @@ export function DetailDrawer({ node, connectedNodes, isOpen, onClose }: DetailDr
             </section>
           </div>
         ) : (
-          <p className="empty-detail">This node has a short summary now. The next analysis pass can enrich it with problem, root cause, solution, and evidence.</p>
+          <p className="empty-detail">{text.emptyDetail}</p>
         )}
 
         <section className="connections drawer-connections">
-          <h3>Connected Concepts</h3>
+          <h3>{text.connectedConcepts}</h3>
           {connectedNodes.map(({ node: connectedNode, edge }) => (
             <article key={`${edge.source}-${edge.target}`}>
               <strong>{connectedNode.title}</strong>
@@ -104,4 +99,3 @@ function DetailSection({ title, content }: { title: string; content?: string }) 
     </section>
   );
 }
-

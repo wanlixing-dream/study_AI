@@ -1,31 +1,26 @@
 import type { ConnectedNode } from '../lib/graph';
-import type { KnowledgeNode, NodeType } from '../data/knowledgeGraph';
+import type { KnowledgeNode } from '../data/knowledgeGraph';
+import { getUiText, learningStatusLabels, nodeTypeLabels, reviewStatusLabels, type Locale } from '../lib/i18n';
 
 type DetailPanelProps = {
   node: KnowledgeNode;
   connectedNodes: ConnectedNode[];
+  locale: Locale;
 };
 
-const typeLabels: Record<NodeType, string> = {
-  company: 'Company',
-  model: 'Model',
-  technique: 'Technique',
-  scenario: 'Scenario',
-  engineering: 'Engineering',
-  'case-study': 'Case Study'
-};
+export function DetailPanel({ node, connectedNodes, locale }: DetailPanelProps) {
+  const text = getUiText(locale);
 
-export function DetailPanel({ node, connectedNodes }: DetailPanelProps) {
   return (
     <aside className="detail-panel">
       <div className="detail-header">
-        <span className={`type-pill ${node.type}`}>{typeLabels[node.type]}</span>
-        <span className="review-status">{node.reviewStatus}</span>
+        <span className={`type-pill ${node.type}`}>{nodeTypeLabels[locale][node.type]}</span>
+        <span className="review-status">{reviewStatusLabels[locale][node.reviewStatus]}</span>
       </div>
       <h2>{node.title}</h2>
       <p className="summary">{node.summary}</p>
       {node.detail ? (
-        <p className="detail-hint">Click the node again or a learning path item to open the full research detail.</p>
+        <p className="detail-hint">{text.fullDetailHint}</p>
       ) : null}
 
       <div className="tag-list">
@@ -36,25 +31,25 @@ export function DetailPanel({ node, connectedNodes }: DetailPanelProps) {
 
       <dl className="meta-grid">
         <div>
-          <dt>Learning</dt>
-          <dd>{node.learningStatus}</dd>
+          <dt>{text.learning}</dt>
+          <dd>{learningStatusLabels[locale][node.learningStatus]}</dd>
         </div>
         <div>
-          <dt>Confidence</dt>
+          <dt>{text.confidence}</dt>
           <dd>{Math.round(node.confidence * 100)}%</dd>
         </div>
         <div>
-          <dt>Updated</dt>
+          <dt>{text.updated}</dt>
           <dd>{node.updatedAt}</dd>
         </div>
         <div>
-          <dt>Source</dt>
+          <dt>{text.source}</dt>
           <dd>{node.source}</dd>
         </div>
       </dl>
 
       <section className="connections">
-        <h3>Connected Concepts</h3>
+        <h3>{text.connectedConcepts}</h3>
         {connectedNodes.map(({ node: connectedNode, edge }) => (
           <article key={`${edge.source}-${edge.target}`}>
             <strong>{connectedNode.title}</strong>

@@ -2,10 +2,12 @@ import { useMemo, useRef } from 'react';
 import ForceGraph3D, { type ForceGraphMethods } from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 import type { KnowledgeEdge, KnowledgeNode, NodeType } from '../data/knowledgeGraph';
+import { getUiText, nodeTypeLabels, type Locale } from '../lib/i18n';
 
 type KnowledgeGraph3DProps = {
   edges: KnowledgeEdge[];
   highlightedNodeIds: Set<string>;
+  locale: Locale;
   nodes: KnowledgeNode[];
   selectedNodeId: string;
   onSelectNode: (node: KnowledgeNode) => void;
@@ -27,11 +29,13 @@ const nodeColors: Record<NodeType, string> = {
 export function KnowledgeGraph3D({
   edges,
   highlightedNodeIds,
+  locale,
   nodes,
   selectedNodeId,
   onSelectNode
 }: KnowledgeGraph3DProps) {
   const graphRef = useRef<ForceGraphMethods<GraphNode, KnowledgeEdge> | undefined>(undefined);
+  const text = getUiText(locale);
 
   const graphData = useMemo(
     () => ({
@@ -59,7 +63,7 @@ export function KnowledgeGraph3D({
         linkDirectionalParticleSpeed={0.004}
         linkLabel={(link) => `${link.label}: ${link.explanation}`}
         linkOpacity={0.72}
-        nodeLabel={(node) => `${node.title} | ${node.type}`}
+        nodeLabel={(node) => `${node.title} | ${nodeTypeLabels[locale][node.type]}`}
         nodeThreeObject={(node) => {
           const sprite = new SpriteText(node.title);
           sprite.color = node.id === selectedNodeId ? '#ffffff' : node.color;
@@ -86,10 +90,10 @@ export function KnowledgeGraph3D({
         warmupTicks={80}
       />
       <div className="graph-caption">
-        <span>Rotate</span>
-        <span>Zoom</span>
-        <span>Drag nodes</span>
-        <span>Click to inspect</span>
+        <span>{text.rotate}</span>
+        <span>{text.zoom}</span>
+        <span>{text.dragNodes}</span>
+        <span>{text.clickToInspect}</span>
       </div>
     </section>
   );

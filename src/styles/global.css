@@ -66,6 +66,23 @@ h1 {
   line-height: 1.1;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+}
+
+.language-toggle {
+  min-height: 42px;
+  border: 1px solid rgba(125, 211, 252, 0.38);
+  border-radius: 8px;
+  color: #e0f2fe;
+  background: rgba(14, 116, 144, 0.28);
+  padding: 0 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .metric-strip {
   display: grid;
   grid-template-columns: repeat(6, minmax(76px, 1fr));
@@ -522,6 +539,11 @@ select:focus {
   }
 
   .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .topbar-actions {
     align-items: stretch;
     flex-direction: column;
   }

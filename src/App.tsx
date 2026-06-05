@@ -4,6 +4,7 @@ import { DetailPanel } from './components/DetailPanel';
 import { KnowledgeGraph3D } from './components/KnowledgeGraph3D';
 import { Sidebar } from './components/Sidebar';
 import { knowledgeEdges, knowledgeNodes, learningPaths, type KnowledgeNode, type NodeType } from './data/knowledgeGraph';
+import { getUiText, nodeTypeLabels, type Locale } from './lib/i18n';
 import { getConnectedNodes, getLearningPathNodes, getNodeTypeCounts, getVisibleGraph } from './lib/graph';
 
 const allNodeTypes: NodeType[] = ['company', 'model', 'technique', 'scenario', 'engineering', 'case-study'];
@@ -14,6 +15,8 @@ export default function App() {
   const [selectedNodeId, setSelectedNodeId] = useState('rag');
   const [selectedPathId, setSelectedPathId] = useState('enterprise-rag');
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [locale, setLocale] = useState<Locale>('zh');
+  const text = getUiText(locale);
 
   const selectedNode = knowledgeNodes.find((node) => node.id === selectedNodeId) ?? knowledgeNodes[0];
   const selectedPathNodes = getLearningPathNodes(selectedPathId, learningPaths, knowledgeNodes);
@@ -52,16 +55,25 @@ export default function App() {
     <main className="app-shell">
       <header className="topbar">
         <div>
-          <p className="eyebrow">Local AI Learning System</p>
-          <h1>Study AI Knowledge Graph</h1>
+          <p className="eyebrow">{text.appEyebrow}</p>
+          <h1>{text.appTitle}</h1>
         </div>
-        <div className="metric-strip" aria-label="knowledge graph counters">
-          {allNodeTypes.map((type) => (
-            <div className="metric" key={type}>
-              <span>{counts[type]}</span>
-              <small>{type}</small>
-            </div>
-          ))}
+        <div className="topbar-actions">
+          <button
+            className="language-toggle"
+            type="button"
+            onClick={() => setLocale((current) => (current === 'zh' ? 'en' : 'zh'))}
+          >
+            {text.toggleLanguage}
+          </button>
+          <div className="metric-strip" aria-label={text.graphCounterLabel}>
+            {allNodeTypes.map((type) => (
+              <div className="metric" key={type}>
+                <span>{counts[type]}</span>
+                <small>{nodeTypeLabels[locale][type]}</small>
+              </div>
+            ))}
+          </div>
         </div>
       </header>
 
@@ -70,6 +82,7 @@ export default function App() {
           activeTypes={activeTypes}
           allNodeTypes={allNodeTypes}
           learningPaths={learningPaths}
+          locale={locale}
           query={query}
           selectedPathId={selectedPathId}
           selectedPathNodes={selectedPathNodes}
@@ -81,15 +94,17 @@ export default function App() {
         <KnowledgeGraph3D
           edges={graph.edges}
           highlightedNodeIds={selectedPathIds}
+          locale={locale}
           nodes={graph.nodes}
           selectedNodeId={selectedNode.id}
           onSelectNode={selectNode}
         />
-        <DetailPanel node={selectedNode} connectedNodes={connectedNodes} />
+        <DetailPanel locale={locale} node={selectedNode} connectedNodes={connectedNodes} />
       </section>
       <DetailDrawer
         connectedNodes={connectedNodes}
         isOpen={isDetailOpen}
+        locale={locale}
         node={selectedNode}
         onClose={() => setIsDetailOpen(false)}
       />
