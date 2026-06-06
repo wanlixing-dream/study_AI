@@ -315,11 +315,26 @@ npm run dev
 
 Open the local URL printed by Vite.
 
+Backend Phase A foundation:
+
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8001
+```
+
+Open `http://127.0.0.1:8001/health`.
+
 ## Verify
 
 ```bash
 npm test -- --run
 npm run build
+cd backend
+python -m compileall -q app tests
+python -m unittest discover -s tests
 ```
 
 ## Project Structure
@@ -331,6 +346,7 @@ src/components/              Sidebar, 3D graph, and detail panel
 src/styles/global.css        App styling
 tests/graph.test.ts          Core graph behavior tests
 docs/superpowers/            Design and implementation plan
+backend/                     FastAPI backend foundation for uploads, retrieval, memory, and adapters
 learningAgent/               Independent Python learning engine: RAG, memory, MCP, API
 integrations/                Reserved adapter boundary for future runtime coupling
 ```

@@ -3,3 +3,8 @@ dist/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+backend/.venv/
+backend/storage/
+backend/.env
+__pycache__/
+*.pyc
