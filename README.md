@@ -20,6 +20,27 @@ A local-first AI application knowledge graph for building a connected understand
   <img src="docs/images/fig7-learning-agent-integration.svg" alt="Fig 7. Decoupled LearningAgent Integration Architecture" width="100%"/>
 </p>
 
+## LearningAgent Reuse And Production Plan
+
+The existing sibling project at `../learningAgent` is reusable as a learning-agent domain engine, but it should not be copied into this frontend or deployed as-is. The reusable parts are learning-plan generation, adaptive learning sessions, quiz/mastery tracking, memory retrieval, RAG primitives, tracing/evaluation, and MCP wrappers. The production risks are local JSONL/Markdown/Chroma persistence, global API singletons, no auth/rate limit/worker queue, and a current API syntax blocker in `learningAgent/api/server.py`.
+
+Study AI should integrate it through a backend adapter:
+
+```text
+Study AI React graph
+  -> Study AI FastAPI backend
+  -> LearningAgent REST/MCP adapter
+  -> LearningAgent service
+  -> PostgreSQL + pgvector / object storage / worker queue
+```
+
+Production planning docs:
+
+- [LearningAgent production reuse plan](docs/architecture/learning-agent-production-reuse.md)
+- [Production target architecture](docs/images/fig8-learningagent-production-architecture.svg)
+- [High-concurrency ingestion flow](docs/images/fig9-high-concurrency-learning-flow.svg)
+- [Module boundary map](docs/images/fig10-learningagent-module-boundaries.svg)
+
 ## Run Locally
 
 ```bash
