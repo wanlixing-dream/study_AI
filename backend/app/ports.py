@@ -20,6 +20,9 @@ class QueuePort(Protocol):
     def enqueue_ingestion(self, document_id: str) -> IngestionJob:
         """Queue ingestion work for a stored document."""
 
+    def get_job(self, job_id: str) -> IngestionJob | None:
+        """Read ingestion job metadata."""
+
 
 class VectorRepositoryPort(Protocol):
     def upsert_chunks(self, chunks: list[DocumentChunk]) -> None:
@@ -62,4 +65,3 @@ class DocumentRepositoryPort(Protocol):
 
     def get_document(self, document_id: str) -> DocumentRecord | None:
         """Read document metadata."""
-

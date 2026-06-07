@@ -33,7 +33,7 @@ flowchart LR
 | --- | --- | --- | --- | --- |
 | M0 | Project Execution Memory | Keeps context, module boundaries, acceptance criteria, and progress recoverable. | docs, `.omx` | Completed |
 | M1 | Backend API Contracts | Defines stable API boundaries for UI, workers, database repositories, and LearningAgent. | `backend/app/api`, `backend/tests` | In progress |
-| M2 | PostgreSQL Persistence | Turns local demo state into durable deployable state. | `backend/app/adapters`, `backend/migrations` | Pending |
+| M2 | PostgreSQL Persistence | Turns local demo state into durable deployable state. | `backend/app/adapters`, `backend/migrations` | Completed for documents/jobs |
 | M3 | Ingestion Worker | Converts uploaded materials into parsed chunks, embeddings, and candidate knowledge. | `backend/app/services`, worker runtime | Pending |
 | M4 | Retrieval And RAG | Makes stored knowledge searchable for agents and users. | retrieval service, pgvector, text search | Pending |
 | M5 | Memory System | Stores durable personal/project memories with review and audit events. | memory service, memory tables | Pending |
@@ -117,6 +117,18 @@ M2 replaces in-memory state with deployable state. Without this, uploaded files 
 
 - Upload and job APIs work through PostgreSQL repositories.
 - Tests can prove document/job round trips.
+
+### Current Evidence
+
+- `backend/app/adapters/postgres.py` implements document and ingestion-job repositories.
+- `backend/app/dependencies.py` can switch between `memory` and `postgres` repository backends.
+- `backend/tests/test_postgres_adapters.py` covers URL normalization, row mapping, document repository SQL path, and ingestion-job repository SQL path without requiring a live database.
+- `backend/tests/test_postgres_integration.py` runs migration and document/job round-trip tests when `STUDY_AI_TEST_DATABASE_URL` is available.
+
+### Remaining M2 Work
+
+- Run live integration tests once valid local PostgreSQL credentials are available.
+- Add chunk, candidate, and memory PostgreSQL repositories when M3, M5, and M7 need them.
 
 ## M3: Ingestion Worker
 

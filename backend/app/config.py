@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     host: str = "127.0.0.1"
     port: int = 8001
     frontend_origin: str = "http://127.0.0.1:5173"
+    repository_backend: str = "memory"
     database_url: str = "postgresql+psycopg://study_ai:study_ai@127.0.0.1:5432/study_ai"
     storage_root: Path = Path("./storage")
     learning_agent_base_url: str = "http://127.0.0.1:8000"
@@ -31,4 +32,3 @@ class Settings(BaseSettings):
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     return Settings()
-

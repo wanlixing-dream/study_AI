@@ -37,8 +37,15 @@
     {
       "id": "M2",
       "name": "PostgreSQL Persistence",
-      "status": "pending",
-      "globalRole": "Replace in-memory demo state with durable deployable product state."
+      "status": "completed-documents-jobs",
+      "globalRole": "Replace in-memory demo state with durable deployable product state.",
+      "completedEvidence": [
+        "backend/app/adapters/postgres.py implements document and ingestion-job repositories",
+        "backend/app/dependencies.py supports STUDY_AI_REPOSITORY_BACKEND=postgres",
+        "backend/tests/test_postgres_adapters.py covers repository SQL paths with fake connections",
+        "backend/tests/test_postgres_integration.py provides opt-in live migration and round-trip coverage"
+      ],
+      "nextAction": "Move to M3 ingestion worker. Re-run M2 live integration when valid local PostgreSQL credentials are available."
     },
     {
       "id": "M3",

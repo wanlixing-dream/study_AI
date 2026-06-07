@@ -51,7 +51,7 @@ def create_router(container: AppContainer) -> APIRouter:
 
     @router.get("/jobs/{job_id}")
     def get_job(job_id: str) -> dict:
-        job = container.queue.jobs.get(job_id)
+        job = container.queue.get_job(job_id)
         if not job:
             raise HTTPException(status_code=404, detail="Job not found.")
         return {"job": serialize_job(job)}

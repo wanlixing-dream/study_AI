@@ -46,6 +46,9 @@ class InMemoryQueueAdapter:
         self.jobs[job.id] = job
         return job
 
+    def get_job(self, job_id: str) -> IngestionJob | None:
+        return self.jobs.get(job_id)
+
 
 class InMemoryVectorRepository:
     def __init__(self) -> None:

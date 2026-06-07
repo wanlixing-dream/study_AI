@@ -28,6 +28,7 @@ class BackendContractTests(unittest.TestCase):
         settings = Settings()
 
         self.assertEqual(settings.api_prefix, "/v1")
+        self.assertEqual(settings.repository_backend, "memory")
         self.assertIn("postgresql", settings.database_url)
         self.assertIn("127.0.0.1:8000", settings.learning_agent_base_url)
 
@@ -101,6 +102,7 @@ class BackendContractTests(unittest.TestCase):
             self.assertEqual(documents.get_document(document.id), document)
             self.assertEqual(job.document_id, document.id)
             self.assertIn(job.id, queue.jobs)
+            self.assertEqual(queue.get_job(job.id), job)
 
     def test_dev_vector_repository_supports_keyword_smoke_search(self) -> None:
         repo = InMemoryVectorRepository()
