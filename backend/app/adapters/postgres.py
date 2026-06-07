@@ -94,6 +94,20 @@ class PostgresDocumentRepository:
             return None
         return document_from_row(row)
 
+    def update_document_status(self, document_id: str, status: DocumentStatus) -> DocumentRecord:
+        return document_from_row(
+            self._fetch_one(
+                """
+                UPDATE documents
+                SET status = %(status)s, updated_at = now()
+                WHERE id = %(document_id)s
+                RETURNING id, owner_id, title, source_type, storage_uri, mime_type,
+                  file_size, content_hash, status, created_at
+                """,
+                {"document_id": document_id, "status": status.value},
+            )
+        )
+
     def _fetch_one(self, sql: str, params: Mapping[str, Any]) -> Mapping[str, Any]:
         row = self._fetch_optional(sql, params)
         if row is None:
@@ -147,6 +161,27 @@ class PostgresQueueAdapter:
         if row is None:
             return None
         return job_from_row(row)
+
+    def update_job_status(self, job_id: str, status: JobStatus, stage: str) -> IngestionJob:
+        return job_from_row(
+            self._fetch_one(
+                """
+                UPDATE ingestion_jobs
+                SET status = %(status)s, stage = %(stage)s,
+                  started_at = CASE
+                    WHEN %(status)s = 'running' AND started_at IS NULL THEN now()
+                    ELSE started_at
+                  END,
+                  finished_at = CASE
+                    WHEN %(status)s IN ('completed', 'failed', 'cancelled') THEN now()
+                    ELSE finished_at
+                  END
+                WHERE id = %(job_id)s
+                RETURNING id, owner_id, document_id, status, stage, retry_count, created_at
+                """,
+                {"job_id": job_id, "status": status.value, "stage": stage},
+            )
+        )
 
     def _fetch_one(self, sql: str, params: Mapping[str, Any]) -> Mapping[str, Any]:
         row = self._fetch_optional(sql, params)

@@ -34,7 +34,7 @@ flowchart LR
 | M0 | Project Execution Memory | Keeps context, module boundaries, acceptance criteria, and progress recoverable. | docs, `.omx` | Completed |
 | M1 | Backend API Contracts | Defines stable API boundaries for UI, workers, database repositories, and LearningAgent. | `backend/app/api`, `backend/tests` | In progress |
 | M2 | PostgreSQL Persistence | Turns local demo state into durable deployable state. | `backend/app/adapters`, `backend/migrations` | Completed for documents/jobs |
-| M3 | Ingestion Worker | Converts uploaded materials into parsed chunks, embeddings, and candidate knowledge. | `backend/app/services`, worker runtime | Pending |
+| M3 | Ingestion Worker | Converts uploaded materials into parsed chunks, embeddings, and candidate knowledge. | `backend/app/services`, worker runtime | Completed for markdown/txt local worker |
 | M4 | Retrieval And RAG | Makes stored knowledge searchable for agents and users. | retrieval service, pgvector, text search | Pending |
 | M5 | Memory System | Stores durable personal/project memories with review and audit events. | memory service, memory tables | Pending |
 | M6 | LearningAgent Adapter | Reuses `learningAgent` through a service boundary. | adapter, contract tests | Pending |
@@ -150,6 +150,21 @@ M3 turns uploaded material into useful knowledge. It is the bridge from file upl
 
 - A markdown upload produces chunks and candidates.
 - Job status shows processing stages and terminal state.
+
+### Current Evidence
+
+- `backend/app/services/ingestion_worker.py` parses markdown/txt, chunks content, classifies AI Agent categories, indexes chunks, and generates candidates.
+- `POST /v1/jobs/{job_id}/run` triggers local worker execution.
+- `GET /v1/knowledge/candidates` exposes generated candidates for inspection only.
+- `backend/tests/test_ingestion_worker.py` covers worker processing and category classification.
+- `backend/tests/test_api_routes.py` covers upload -> run job -> candidate list.
+
+### Remaining M3 Work
+
+- Add durable PostgreSQL chunk/candidate output when moving beyond local memory.
+- Add PDF parsing.
+- Add embedding generation.
+- Move from manual run endpoint to async queue worker execution.
 
 ## M4: Retrieval And RAG
 

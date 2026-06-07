@@ -8,7 +8,7 @@ from app.adapters.postgres import (
     job_from_row,
     normalize_database_url,
 )
-from app.domain.models import DocumentRecord, DocumentStatus, IngestionJob, JobStatus
+from app.domain.models import DocumentRecord, DocumentStatus, JobStatus
 
 
 class FakeCursor:
@@ -99,7 +99,9 @@ class PostgresAdapterTests(unittest.TestCase):
         self.assertEqual(job.stage, "created")
 
     def test_postgres_document_repository_round_trips_through_connection(self) -> None:
-        factory = FakeConnectionFactory([document_row(), None])
+        updated_row = document_row()
+        updated_row["status"] = "completed"
+        factory = FakeConnectionFactory([document_row(), updated_row, None])
         repository = PostgresDocumentRepository(factory)
         document = DocumentRecord(
             id="doc-1",
@@ -112,24 +114,33 @@ class PostgresAdapterTests(unittest.TestCase):
         )
 
         created = repository.create_document(document)
+        updated = repository.update_document_status("doc-1", DocumentStatus.completed)
         missing = repository.get_document("missing-doc")
 
         self.assertEqual(created.id, "doc-1")
+        self.assertEqual(updated.status, DocumentStatus.completed)
         self.assertIsNone(missing)
         self.assertIn("INSERT INTO documents", factory.cursor.executed[0][0])
-        self.assertIn("FROM documents", factory.cursor.executed[1][0])
+        self.assertIn("UPDATE documents", factory.cursor.executed[1][0])
+        self.assertIn("FROM documents", factory.cursor.executed[2][0])
 
     def test_postgres_queue_adapter_round_trips_through_connection(self) -> None:
-        factory = FakeConnectionFactory([job_row(), None])
+        updated_row = job_row()
+        updated_row["status"] = "completed"
+        updated_row["stage"] = "completed"
+        factory = FakeConnectionFactory([job_row(), updated_row, None])
         queue = PostgresQueueAdapter(factory)
 
         created = queue.enqueue_ingestion("doc-1")
+        updated = queue.update_job_status("job-1", JobStatus.completed, "completed")
         missing = queue.get_job("missing-job")
 
         self.assertEqual(created.document_id, "doc-1")
+        self.assertEqual(updated.status, JobStatus.completed)
         self.assertIsNone(missing)
         self.assertIn("INSERT INTO ingestion_jobs", factory.cursor.executed[0][0])
-        self.assertIn("FROM ingestion_jobs", factory.cursor.executed[1][0])
+        self.assertIn("UPDATE ingestion_jobs", factory.cursor.executed[1][0])
+        self.assertIn("FROM ingestion_jobs", factory.cursor.executed[2][0])
 
 
 if __name__ == "__main__":

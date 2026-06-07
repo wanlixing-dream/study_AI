@@ -1,7 +1,8 @@
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
 from app.dependencies import AppContainer
-from app.domain.models import DocumentRecord, IngestionJob
+from app.domain.models import DocumentRecord, IngestionJob, KnowledgeCandidate
+from app.services.ingestion_worker import IngestionResourceNotFoundError, IngestionValidationError
 
 
 def serialize_document(document: DocumentRecord) -> dict:
@@ -31,6 +32,20 @@ def serialize_job(job: IngestionJob) -> dict:
     }
 
 
+def serialize_candidate(candidate: KnowledgeCandidate) -> dict:
+    return {
+        "id": candidate.id,
+        "title": candidate.title,
+        "summary": candidate.summary,
+        "candidateType": candidate.candidate_type,
+        "confidence": candidate.confidence,
+        "reviewStatus": candidate.review_status.value,
+        "tags": list(candidate.tags),
+        "evidence": list(candidate.evidence),
+        "createdAt": candidate.created_at.isoformat(),
+    }
+
+
 def create_router(container: AppContainer) -> APIRouter:
     router = APIRouter()
 
@@ -56,11 +71,29 @@ def create_router(container: AppContainer) -> APIRouter:
             raise HTTPException(status_code=404, detail="Job not found.")
         return {"job": serialize_job(job)}
 
+    @router.post("/jobs/{job_id}/run")
+    def run_job(job_id: str) -> dict:
+        try:
+            job, chunks, candidates = container.ingestion_worker.process_job(job_id)
+        except IngestionResourceNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except IngestionValidationError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return {
+            "job": serialize_job(job),
+            "chunkCount": len(chunks),
+            "candidateCount": len(candidates),
+        }
+
     @router.get("/uploads/{document_id}")
     def get_upload(document_id: str) -> dict:
         document = container.documents.get_document(document_id)
         if not document:
             raise HTTPException(status_code=404, detail="Document not found.")
         return {"document": serialize_document(document)}
+
+    @router.get("/knowledge/candidates")
+    def list_candidates() -> dict:
+        return {"candidates": [serialize_candidate(candidate) for candidate in container.graph.list_candidates()]}
 
     return router

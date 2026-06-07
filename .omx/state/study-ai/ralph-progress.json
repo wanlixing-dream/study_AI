@@ -50,8 +50,15 @@
     {
       "id": "M3",
       "name": "Ingestion Worker",
-      "status": "pending",
-      "globalRole": "Transform uploaded materials into parsed chunks, classified knowledge, embeddings, and jobs."
+      "status": "completed-markdown-txt-local-worker",
+      "globalRole": "Transform uploaded materials into parsed chunks, classified knowledge, embeddings, and jobs.",
+      "completedEvidence": [
+        "backend/app/services/ingestion_worker.py parses text, chunks content, classifies categories, indexes chunks, and generates candidates",
+        "POST /v1/jobs/{job_id}/run executes local ingestion worker",
+        "GET /v1/knowledge/candidates exposes generated candidates for inspection",
+        "backend/tests/test_ingestion_worker.py and backend/tests/test_api_routes.py cover the upload-to-candidate flow"
+      ],
+      "nextAction": "Move to M4 retrieval or harden M3 with durable chunks, PDF parsing, embeddings, and async queue execution."
     },
     {
       "id": "M4",

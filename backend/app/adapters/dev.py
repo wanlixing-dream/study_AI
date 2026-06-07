@@ -1,3 +1,4 @@
+from dataclasses import replace
 from pathlib import Path
 from uuid import uuid4
 
@@ -5,7 +6,9 @@ from app.domain.models import (
     AgentMemory,
     DocumentChunk,
     DocumentRecord,
+    DocumentStatus,
     IngestionJob,
+    JobStatus,
     KnowledgeCandidate,
     MemoryEvent,
     RetrievalResult,
@@ -24,6 +27,11 @@ class LocalFileStorageAdapter:
         target.write_bytes(content)
         return f"local://{target.as_posix()}"
 
+    def read_uri(self, storage_uri: str) -> bytes:
+        if not storage_uri.startswith("local://"):
+            raise ValueError(f"Unsupported local storage URI: {storage_uri}")
+        return Path(storage_uri.removeprefix("local://")).read_bytes()
+
 
 class InMemoryDocumentRepository:
     def __init__(self) -> None:
@@ -35,6 +43,12 @@ class InMemoryDocumentRepository:
 
     def get_document(self, document_id: str) -> DocumentRecord | None:
         return self.documents.get(document_id)
+
+    def update_document_status(self, document_id: str, status: DocumentStatus) -> DocumentRecord:
+        document = self.documents[document_id]
+        updated = replace(document, status=status)
+        self.documents[document_id] = updated
+        return updated
 
 
 class InMemoryQueueAdapter:
@@ -48,6 +62,12 @@ class InMemoryQueueAdapter:
 
     def get_job(self, job_id: str) -> IngestionJob | None:
         return self.jobs.get(job_id)
+
+    def update_job_status(self, job_id: str, status: JobStatus, stage: str) -> IngestionJob:
+        job = self.jobs[job_id]
+        updated = replace(job, status=status, stage=stage)
+        self.jobs[job_id] = updated
+        return updated
 
 
 class InMemoryVectorRepository:
@@ -78,6 +98,10 @@ class InMemoryVectorRepository:
 class InMemoryGraphRepository:
     def __init__(self) -> None:
         self.candidates: dict[str, KnowledgeCandidate] = {}
+
+    def add_candidate(self, candidate: KnowledgeCandidate) -> KnowledgeCandidate:
+        self.candidates[candidate.id] = candidate
+        return candidate
 
     def list_candidates(self) -> list[KnowledgeCandidate]:
         return list(self.candidates.values())

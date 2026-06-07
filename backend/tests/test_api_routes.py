@@ -29,6 +29,36 @@ class ApiRouteTests(unittest.TestCase):
         self.assertEqual(document_response.status_code, 200)
         self.assertEqual(document_response.json()["document"]["id"], payload["document"]["id"])
 
+    def test_run_job_processes_upload_and_exposes_candidates(self) -> None:
+        client = TestClient(create_app())
+        upload_response = client.post(
+            "/v1/uploads",
+            files={"file": ("agent-rag.md", b"# RAG\nHybrid retrieval chunks.", "text/markdown")},
+        )
+        job_id = upload_response.json()["job"]["id"]
+
+        run_response = client.post(f"/v1/jobs/{job_id}/run")
+        candidates_response = client.get("/v1/knowledge/candidates")
+
+        self.assertEqual(run_response.status_code, 200)
+        self.assertEqual(run_response.json()["job"]["status"], "completed")
+        self.assertEqual(run_response.json()["chunkCount"], 1)
+        self.assertEqual(run_response.json()["candidateCount"], 1)
+        self.assertEqual(candidates_response.status_code, 200)
+        self.assertEqual(len(candidates_response.json()["candidates"]), 1)
+
+    def test_run_job_rejects_unsupported_mime_as_validation_error(self) -> None:
+        client = TestClient(create_app())
+        upload_response = client.post(
+            "/v1/uploads",
+            files={"file": ("agent.bin", b"binary-ish", "application/pdf")},
+        )
+        job_id = upload_response.json()["job"]["id"]
+
+        run_response = client.post(f"/v1/jobs/{job_id}/run")
+
+        self.assertEqual(run_response.status_code, 422)
+
     def test_empty_upload_is_rejected(self) -> None:
         client = TestClient(create_app())
 

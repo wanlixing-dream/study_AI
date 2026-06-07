@@ -1,16 +1,26 @@
 from dataclasses import dataclass
 
-from app.adapters.dev import InMemoryDocumentRepository, InMemoryQueueAdapter, LocalFileStorageAdapter
+from app.adapters.dev import (
+    InMemoryDocumentRepository,
+    InMemoryGraphRepository,
+    InMemoryQueueAdapter,
+    InMemoryVectorRepository,
+    LocalFileStorageAdapter,
+)
 from app.config import get_settings
-from app.ports import DocumentRepositoryPort, QueuePort
+from app.ports import DocumentRepositoryPort, GraphRepositoryPort, QueuePort, VectorRepositoryPort
 from app.services.ingestion import IngestionService
+from app.services.ingestion_worker import IngestionWorkerService
 
 
 @dataclass
 class AppContainer:
     documents: DocumentRepositoryPort
     queue: QueuePort
+    vector: VectorRepositoryPort
+    graph: GraphRepositoryPort
     ingestion: IngestionService
+    ingestion_worker: IngestionWorkerService
 
 
 def create_container() -> AppContainer:
@@ -33,5 +43,21 @@ def create_container() -> AppContainer:
     else:
         raise ValueError(f"Unsupported repository backend: {settings.repository_backend}")
 
+    vector = InMemoryVectorRepository()
+    graph = InMemoryGraphRepository()
     ingestion = IngestionService(storage=storage, documents=documents, queue=queue)
-    return AppContainer(documents=documents, queue=queue, ingestion=ingestion)
+    ingestion_worker = IngestionWorkerService(
+        storage=storage,
+        documents=documents,
+        queue=queue,
+        vector=vector,
+        graph=graph,
+    )
+    return AppContainer(
+        documents=documents,
+        queue=queue,
+        vector=vector,
+        graph=graph,
+        ingestion=ingestion,
+        ingestion_worker=ingestion_worker,
+    )
