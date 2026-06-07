@@ -11,6 +11,7 @@ from app.config import get_settings
 from app.ports import DocumentRepositoryPort, GraphRepositoryPort, QueuePort, VectorRepositoryPort
 from app.services.ingestion import IngestionService
 from app.services.ingestion_worker import IngestionWorkerService
+from app.services.retrieval import RetrievalService
 
 
 @dataclass
@@ -21,6 +22,7 @@ class AppContainer:
     graph: GraphRepositoryPort
     ingestion: IngestionService
     ingestion_worker: IngestionWorkerService
+    retrieval: RetrievalService
 
 
 def create_container() -> AppContainer:
@@ -53,6 +55,7 @@ def create_container() -> AppContainer:
         vector=vector,
         graph=graph,
     )
+    retrieval = RetrievalService(vector=vector)
     return AppContainer(
         documents=documents,
         queue=queue,
@@ -60,4 +63,5 @@ def create_container() -> AppContainer:
         graph=graph,
         ingestion=ingestion,
         ingestion_worker=ingestion_worker,
+        retrieval=retrieval,
     )

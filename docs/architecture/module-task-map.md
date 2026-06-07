@@ -35,7 +35,7 @@ flowchart LR
 | M1 | Backend API Contracts | Defines stable API boundaries for UI, workers, database repositories, and LearningAgent. | `backend/app/api`, `backend/tests` | In progress |
 | M2 | PostgreSQL Persistence | Turns local demo state into durable deployable state. | `backend/app/adapters`, `backend/migrations` | Completed for documents/jobs |
 | M3 | Ingestion Worker | Converts uploaded materials into parsed chunks, embeddings, and candidate knowledge. | `backend/app/services`, worker runtime | Completed for markdown/txt local worker |
-| M4 | Retrieval And RAG | Makes stored knowledge searchable for agents and users. | retrieval service, pgvector, text search | Pending |
+| M4 | Retrieval And RAG | Makes stored knowledge searchable for agents and users. | retrieval service, pgvector, text search | Completed for local keyword search |
 | M5 | Memory System | Stores durable personal/project memories with review and audit events. | memory service, memory tables | Pending |
 | M6 | LearningAgent Adapter | Reuses `learningAgent` through a service boundary. | adapter, contract tests | Pending |
 | M7 | Candidate Review And Graph Writeback | Prevents unreviewed AI output from entering the approved graph. | candidate service, graph repository | Pending |
@@ -184,6 +184,20 @@ M4 makes the knowledge base queryable by users and agents.
 
 - Queries return relevant chunks with sources and scores.
 - Retrieval tests cover dense/text/fused behavior.
+
+### Current Evidence
+
+- `backend/app/services/retrieval.py` validates search input and calls the vector repository port.
+- `GET /v1/retrieval/search?query=...` exposes local retrieval results.
+- `backend/tests/test_retrieval.py` covers search success and blank query rejection.
+- `backend/tests/test_api_routes.py` covers upload -> run worker -> search flow.
+
+### Remaining M4 Work
+
+- Add PostgreSQL full-text recall.
+- Add pgvector dense recall.
+- Add RRF fusion across text and dense results.
+- Add optional reranker and answer synthesis later.
 
 ## M5: Memory System
 

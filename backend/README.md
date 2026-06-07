@@ -44,6 +44,7 @@ GET  /v1/uploads/{document_id}
 GET  /v1/jobs/{job_id}
 POST /v1/jobs/{job_id}/run
 GET  /v1/knowledge/candidates
+GET  /v1/retrieval/search?query=...
 ```
 
 ## Verify
@@ -64,6 +65,7 @@ python -m unittest discover -s tests
 - PostgreSQL document and ingestion-job repositories behind the same ports.
 - Upload acceptance service that stores bytes, creates document metadata, and enqueues ingestion.
 - Local ingestion worker for markdown/txt parsing, chunking, AI Agent category classification, chunk indexing, and candidate generation.
+- Local retrieval service and search API backed by indexed chunks.
 - Upload, document lookup, and job API routes backed by development adapters.
 
 ## Next Backend Steps
@@ -73,6 +75,6 @@ Use `C:\Users\WU\Desktop\1\study_AI\docs\architecture\module-task-map.md` as the
 1. Run live PostgreSQL integration tests after local database credentials are available.
 2. Add durable chunk and candidate repositories when M3 needs PostgreSQL-backed worker output.
 3. Add PDF parsing, embedding generation, and async queue execution as the next M3 hardening pass.
-4. Add M6 LearningAgent REST adapter with mocked tests first.
-5. Add M4 retrieval service with full-text recall, pgvector recall, and RRF fusion.
+4. Add M4 PostgreSQL full-text recall, pgvector recall, and RRF fusion.
+5. Add M6 LearningAgent REST adapter with mocked tests first.
 6. Add M8 frontend upload center UI that calls the backend upload/job endpoints.

@@ -1,7 +1,7 @@
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Query, UploadFile
 
 from app.dependencies import AppContainer
-from app.domain.models import DocumentRecord, IngestionJob, KnowledgeCandidate
+from app.domain.models import DocumentRecord, IngestionJob, KnowledgeCandidate, RetrievalResult
 from app.services.ingestion_worker import IngestionResourceNotFoundError, IngestionValidationError
 
 
@@ -43,6 +43,17 @@ def serialize_candidate(candidate: KnowledgeCandidate) -> dict:
         "tags": list(candidate.tags),
         "evidence": list(candidate.evidence),
         "createdAt": candidate.created_at.isoformat(),
+    }
+
+
+def serialize_retrieval_result(result: RetrievalResult) -> dict:
+    return {
+        "chunkId": result.chunk_id,
+        "documentId": result.document_id,
+        "content": result.content,
+        "score": result.score,
+        "source": result.source,
+        "metadata": result.metadata,
     }
 
 
@@ -95,5 +106,16 @@ def create_router(container: AppContainer) -> APIRouter:
     @router.get("/knowledge/candidates")
     def list_candidates() -> dict:
         return {"candidates": [serialize_candidate(candidate) for candidate in container.graph.list_candidates()]}
+
+    @router.get("/retrieval/search")
+    def search_knowledge(query: str = Query(..., min_length=1), top_k: int = Query(10, ge=1, le=50)) -> dict:
+        try:
+            results = container.retrieval.search(query=query, top_k=top_k)
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return {
+            "query": query,
+            "results": [serialize_retrieval_result(result) for result in results],
+        }
 
     return router

@@ -63,8 +63,14 @@
     {
       "id": "M4",
       "name": "Retrieval And RAG",
-      "status": "pending",
-      "globalRole": "Make uploaded knowledge searchable and usable by agent workflows."
+      "status": "completed-local-keyword-search",
+      "globalRole": "Make uploaded knowledge searchable and usable by agent workflows.",
+      "completedEvidence": [
+        "backend/app/services/retrieval.py adds a retrieval service behind VectorRepositoryPort",
+        "GET /v1/retrieval/search exposes searchable indexed chunks",
+        "backend/tests/test_retrieval.py and backend/tests/test_api_routes.py cover local search behavior"
+      ],
+      "nextAction": "Add PostgreSQL full-text, pgvector dense recall, and RRF fusion in the next M4 hardening slice."
     },
     {
       "id": "M5",
@@ -116,12 +122,15 @@
       "User wanted context-loss prevention: .omx/context/study-ai-module-execution-20260607T065711Z.md, PRD, test spec, and progress ledger were created.",
       "User wanted planning followed by execution: M1 started with GET /v1/uploads/{document_id} and route tests.",
       "User wanted PostgreSQL/JVM/high-scale direction preserved: module map includes M2 PostgreSQL Persistence, M10 Scale Practice Lab, and M11 JVM Companion Learning.",
-      "Architect rejection fixes were applied: upload_id changed to document_id, missing job 404 test added, and candidate review kept in M7."
+      "M2 completed the documents/jobs PostgreSQL adapter slice while leaving live DB validation opt-in behind credentials.",
+      "M3 completed the markdown/txt local ingestion worker slice while keeping approval in M7.",
+      "M4 completed the local keyword retrieval boundary while deferring PostgreSQL full-text, pgvector dense recall, and RRF fusion."
     ],
     "verificationEvidence": [
       "python -m compileall -q app tests: exit 0",
-      "python -m unittest discover -s tests: 11 tests OK",
-      "Architect second-pass verification: APPROVED",
+      "python -m unittest discover -s tests: 24 tests OK, 1 skipped live DB test",
+      "M2 architect verification: APPROVED",
+      "M3 architect second-pass verification: APPROVED",
       "AI slop cleaner scoped scan found no masking fallback-like code in changed files"
     ]
   }

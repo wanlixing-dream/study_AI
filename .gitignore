@@ -5,6 +5,7 @@ vite.config.js
 vite.config.d.ts
 backend/.venv/
 backend/storage/
+storage/
 backend/.env
 __pycache__/
 *.pyc

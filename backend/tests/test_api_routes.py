@@ -47,6 +47,11 @@ class ApiRouteTests(unittest.TestCase):
         self.assertEqual(candidates_response.status_code, 200)
         self.assertEqual(len(candidates_response.json()["candidates"]), 1)
 
+        search_response = client.get("/v1/retrieval/search", params={"query": "retrieval"})
+        self.assertEqual(search_response.status_code, 200)
+        self.assertEqual(len(search_response.json()["results"]), 1)
+        self.assertEqual(search_response.json()["results"][0]["source"], "dev-keyword")
+
     def test_run_job_rejects_unsupported_mime_as_validation_error(self) -> None:
         client = TestClient(create_app())
         upload_response = client.post(
