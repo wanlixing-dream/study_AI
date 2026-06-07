@@ -56,4 +56,11 @@ def create_router(container: AppContainer) -> APIRouter:
             raise HTTPException(status_code=404, detail="Job not found.")
         return {"job": serialize_job(job)}
 
+    @router.get("/uploads/{document_id}")
+    def get_upload(document_id: str) -> dict:
+        document = container.documents.get_document(document_id)
+        if not document:
+            raise HTTPException(status_code=404, detail="Document not found.")
+        return {"document": serialize_document(document)}
+
     return router

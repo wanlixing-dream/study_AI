@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "createdAt": "2026-06-06T07:46:23.719Z",
+  "updatedAt": "2026-06-06T07:46:23.719Z",
+  "briefPath": ".omx/ultragoal/brief.md",
+  "goalsPath": ".omx/ultragoal/goals.json",
+  "ledgerPath": ".omx/ultragoal/ledger.jsonl",
+  "codexGoalMode": "aggregate",
+  "goals": [
+    {
+      "id": "G001-g1-api-contract-first-cut",
+      "title": "G1 API contract first cut",
+      "objective": "Produce backend/openapi.yaml and backend/app/schemas.py with Pydantic models that mirror KnowledgeNode, KnowledgeEdge, LearningPath, KnowledgeDetail, KnowledgeEvidence, and CandidateKnowledge from src/data/. No runtime code yet; OpenAPI must be referenceable. Quality gate: npm test -- --run green, npm run build green, pytest for any new module.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G002-g2-fastapi-skeleton-sqlite-seed",
+      "title": "G2 FastAPI skeleton + SQLite seed",
+      "objective": "Stand up minimal FastAPI app in backend/app/main.py exposing GET /api/health, GET /api/nodes, GET /api/edges, GET /api/paths. backend/scripts/seed.py reads src/data/knowledgeGraph.ts and loads it into a SQLite file. Tests use pytest with httpx.AsyncClient. Quality gate: same as G1 plus the four read endpoints return the seed data with status 200.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G003-g3-frontend-dual-source-adapter",
+      "title": "G3 Frontend dual-source adapter",
+      "objective": "Frontend prefers fetch from VITE_API_BASE (default http://localhost:8000) and falls back to existing TypeScript constants on fetch failure or 5xx. Add src/lib/apiClient.ts. Keep npm test and npm run build green; the 9 existing Vitest cases must still pass. Quality gate: same as G1 plus a new test that toggles fetch success/failure to confirm fallback behavior.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G004-g4-review-queue-ui-static",
+      "title": "G4 Review Queue UI (static)",
+      "objective": "Add src/components/ReviewQueue.tsx rendering existing candidateKnowledge data with Approve / Reject / Edit affordances. Wire it into App.tsx as a third surface alongside Graph Map and Detail Drawer. State is local React state only — no persistence yet. Quality gate: same as G1 plus at least one Vitest case for the queue component rendering and the three action callbacks.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G005-g5-candidate-write-api-audit",
+      "title": "G5 Candidate write API + audit",
+      "objective": "Add GET/POST /api/candidates and PATCH /api/candidates/{id} plus an audit table that records reviewer, timestamp, action (approve/reject/edit). Wire Review Queue UI to call the API. Pydantic + SQLAlchemy migrations included. Quality gate: same as G1 plus pytest covering the three write paths and the audit row creation. Review invariant enforced: there is no endpoint that writes to approved nodes directly from an agent context.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G006-g6-local-git-analyzer",
+      "title": "G6 Local git analyzer",
+      "objective": "Add POST /api/git/analyze that takes a local repo path, runs git log heuristics, and produces candidate entries with evidence.type === 'git' and commitHash. Triggers are explicit user actions, never automatic. Quality gate: same as G1 plus pytest using a fixture git repo to assert the produced candidates carry the correct evidence fields.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G007-g7-configurable-model-api-web-resear",
+      "title": "G7 Configurable model API + web research agent",
+      "objective": "Add backend config for a model provider (env-driven, e.g. MODEL_PROVIDER, MODEL_API_KEY) and POST /api/research that does web research with citations and writes candidates with evidence.type === 'web'. Quality gate: same as G1 plus pytest that mocks the model provider and asserts the candidate has at least one web evidence with urlOrPath and date.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G008-g8-learningagent-adapter",
+      "title": "G8 LearningAgent adapter",
+      "objective": "Add integrations/learning-agent/ with client.py (REST) and mcp_client.py (MCP). Add src/components/LearningAgentPanel.tsx sidebar that queries LearningAgent only through the adapter — never by importing Python. Quality gate: same as G1 plus pytest mocking the adapter transport and a Vitest case for the panel that asserts it calls the adapter, not LearningAgent internals.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G009-g9-local-docker-compose-deployment",
+      "title": "G9 Local docker-compose deployment",
+      "objective": "Add docker-compose.yml with web, api, and optional learning-agent services. Add an nginx-style config for the web container with SPA fallback (try_files). Volume for SQLite. docker compose up brings the whole stack online. Quality gate: docker compose config parses cleanly; docker compose build succeeds for at least web and api without external network if pre-cached.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    },
+    {
+      "id": "G010-g10-end-to-end-tests-documentation",
+      "title": "G10 End-to-end tests + documentation",
+      "objective": "Add Playwright (or Vitest browser) smoke for the dual-source fallback, the Review Queue approve flow, and the LearningAgent adapter mock. Update README.md with new run commands. Add docs/architecture/api-boundary.md. Final ultragoal checkpoint must pass ai-slop-cleaner and the independent code-review APPROVE + architect CLEAR gate. Quality gate: same as G1 plus the new e2e suite green and a successful final clean checkpoint with --quality-gate-json.",
+      "status": "pending",
+      "attempt": 0,
+      "createdAt": "2026-06-06T07:46:23.719Z",
+      "updatedAt": "2026-06-06T07:46:23.719Z"
+    }
+  ],
+  "codexObjective": "Complete the durable ultragoal plan in .omx/ultragoal/goals.json, including later accepted/appended stories, under the original brief constraints; use .omx/ultragoal/ledger.jsonl as the audit trail."
+}

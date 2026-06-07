@@ -1,0 +1,114 @@
+{
+  "scope": "study-ai",
+  "mode": "ralph",
+  "active": false,
+  "iteration": 1,
+  "currentPhase": "complete",
+  "completedAt": "2026-06-07T07:06:00Z",
+  "contextSnapshotPath": ".omx/context/study-ai-module-execution-20260607T065711Z.md",
+  "prdPath": ".omx/plans/prd-study-ai-module-execution.md",
+  "testSpecPath": ".omx/plans/test-spec-study-ai-module-execution.md",
+  "modules": [
+    {
+      "id": "M0",
+      "name": "Project Execution Memory",
+      "status": "completed",
+      "globalRole": "Keep the project structure, task decomposition, acceptance criteria, and execution order recoverable across sessions.",
+      "completedEvidence": [
+        "docs/architecture/module-task-map.md",
+        ".omx/context/study-ai-module-execution-20260607T065711Z.md",
+        ".omx/plans/prd-study-ai-module-execution.md",
+        ".omx/plans/test-spec-study-ai-module-execution.md"
+      ],
+      "nextAction": "Use this map before starting each new module task."
+    },
+    {
+      "id": "M1",
+      "name": "Backend API Contracts",
+      "status": "in_progress",
+      "globalRole": "Provide stable HTTP boundaries for the frontend, ingestion workers, review workflow, and LearningAgent adapter.",
+      "completedEvidence": [
+        "GET /v1/uploads/{document_id}",
+        "backend/tests/test_api_routes.py covers upload lookup and missing upload",
+        "backend/tests/test_api_routes.py covers missing job"
+      ],
+      "nextAction": "Move to M2 PostgreSQL repositories. Candidate review belongs to M7."
+    },
+    {
+      "id": "M2",
+      "name": "PostgreSQL Persistence",
+      "status": "pending",
+      "globalRole": "Replace in-memory demo state with durable deployable product state."
+    },
+    {
+      "id": "M3",
+      "name": "Ingestion Worker",
+      "status": "pending",
+      "globalRole": "Transform uploaded materials into parsed chunks, classified knowledge, embeddings, and jobs."
+    },
+    {
+      "id": "M4",
+      "name": "Retrieval And RAG",
+      "status": "pending",
+      "globalRole": "Make uploaded knowledge searchable and usable by agent workflows."
+    },
+    {
+      "id": "M5",
+      "name": "Memory System",
+      "status": "pending",
+      "globalRole": "Persist learning memory and durable insights with review gates."
+    },
+    {
+      "id": "M6",
+      "name": "LearningAgent Adapter",
+      "status": "pending",
+      "globalRole": "Reuse the existing learning agent without coupling Study AI to its internals."
+    },
+    {
+      "id": "M7",
+      "name": "Candidate Review And Graph Writeback",
+      "status": "pending",
+      "globalRole": "Protect the approved knowledge graph from unreviewed AI output."
+    },
+    {
+      "id": "M8",
+      "name": "Frontend Workflows",
+      "status": "pending",
+      "globalRole": "Turn backend capability into usable upload, review, retrieval, and graph experiences."
+    },
+    {
+      "id": "M9",
+      "name": "Deployment And Ops",
+      "status": "pending",
+      "globalRole": "Make the system public, observable, recoverable, and cloud-ready."
+    },
+    {
+      "id": "M10",
+      "name": "Scale Practice Lab",
+      "status": "pending",
+      "globalRole": "Create realistic high-traffic and failure scenarios in a personal project."
+    },
+    {
+      "id": "M11",
+      "name": "JVM Companion Learning",
+      "status": "pending",
+      "globalRole": "Learn Java/JVM/backend concepts through small services and labs tied to real Study AI problems."
+    }
+  ],
+  "completionAudit": {
+    "passed": true,
+    "promptToArtifactChecklist": [
+      "User requested module-by-module project structure: docs/architecture/module-task-map.md lists M0-M11 with global role, work items, done criteria, and execution order.",
+      "User wanted context-loss prevention: .omx/context/study-ai-module-execution-20260607T065711Z.md, PRD, test spec, and progress ledger were created.",
+      "User wanted planning followed by execution: M1 started with GET /v1/uploads/{document_id} and route tests.",
+      "User wanted PostgreSQL/JVM/high-scale direction preserved: module map includes M2 PostgreSQL Persistence, M10 Scale Practice Lab, and M11 JVM Companion Learning.",
+      "Architect rejection fixes were applied: upload_id changed to document_id, missing job 404 test added, and candidate review kept in M7."
+    ],
+    "verificationEvidence": [
+      "python -m compileall -q app tests: exit 0",
+      "python -m unittest discover -s tests: 11 tests OK",
+      "Architect second-pass verification: APPROVED",
+      "AI slop cleaner scoped scan found no masking fallback-like code in changed files"
+    ]
+  }
+}

@@ -16,6 +16,10 @@ A local-first AI application knowledge graph for building a connected understand
 
 `learningAgent/` is treated as an independent Python learning engine, not as code mixed into the React graph frontend. The graph records its capabilities and future integration contracts while keeping runtime coupling behind REST/MCP adapter boundaries.
 
+## Modular Execution Map
+
+Long-term implementation should follow the module task map in [`docs/architecture/module-task-map.md`](docs/architecture/module-task-map.md). It splits the project into execution modules for API contracts, PostgreSQL persistence, ingestion workers, retrieval/RAG, memory, LearningAgent integration, candidate review, frontend workflows, deployment, scale practice, and JVM companion learning.
+
 <p align="center">
   <img src="docs/images/fig7-learning-agent-integration.svg" alt="Fig 7. Decoupled LearningAgent Integration Architecture" width="100%"/>
 </p>
@@ -211,7 +215,7 @@ Study AI backend should expose product contracts:
 
 ```http
 POST /v1/uploads
-GET  /v1/uploads/{upload_id}
+GET  /v1/uploads/{document_id}
 POST /v1/ingestion-jobs
 GET  /v1/jobs/{job_id}
 GET  /v1/knowledge/candidates

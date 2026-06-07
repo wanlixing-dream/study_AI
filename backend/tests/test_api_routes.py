@@ -25,6 +25,10 @@ class ApiRouteTests(unittest.TestCase):
         self.assertEqual(job_response.status_code, 200)
         self.assertEqual(job_response.json()["job"]["id"], payload["job"]["id"])
 
+        document_response = client.get(f"/v1/uploads/{payload['document']['id']}")
+        self.assertEqual(document_response.status_code, 200)
+        self.assertEqual(document_response.json()["document"]["id"], payload["document"]["id"])
+
     def test_empty_upload_is_rejected(self) -> None:
         client = TestClient(create_app())
 
@@ -34,6 +38,20 @@ class ApiRouteTests(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+
+    def test_missing_upload_returns_not_found(self) -> None:
+        client = TestClient(create_app())
+
+        response = client.get("/v1/uploads/missing-document")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_missing_job_returns_not_found(self) -> None:
+        client = TestClient(create_app())
+
+        response = client.get("/v1/jobs/missing-job")
+
+        self.assertEqual(response.status_code, 404)
 
 
 if __name__ == "__main__":
