@@ -1,5 +1,13 @@
 import unittest
+from tempfile import TemporaryDirectory
+from pathlib import Path
 
+from app.adapters.dev import (
+    InMemoryDocumentRepository,
+    InMemoryQueueAdapter,
+    InMemoryVectorRepository,
+    LocalFileStorageAdapter,
+)
 from app.config import Settings
 from app.domain.models import (
     AgentMemory,
@@ -12,6 +20,7 @@ from app.domain.models import (
     ReviewStatus,
 )
 from app.services.health import get_health_status
+from app.services.ingestion import IngestionService
 
 
 class BackendContractTests(unittest.TestCase):
@@ -70,6 +79,45 @@ class BackendContractTests(unittest.TestCase):
 
         self.assertEqual(memory.status, ReviewStatus.candidate)
         self.assertEqual(candidate.review_status, ReviewStatus.candidate)
+
+    def test_upload_acceptance_stores_document_and_enqueues_job(self) -> None:
+        with TemporaryDirectory() as tmp:
+            storage = LocalFileStorageAdapter(Path(tmp))
+            documents = InMemoryDocumentRepository()
+            queue = InMemoryQueueAdapter()
+            service = IngestionService(storage=storage, documents=documents, queue=queue)
+            payload = b"# RAG\nRetrieval augmented generation"
+
+            document, job = service.accept_upload(
+                filename="agent-rag.md",
+                content=payload,
+                mime_type="text/markdown",
+            )
+
+            self.assertEqual(document.title, "agent-rag.md")
+            self.assertEqual(document.file_size, len(payload))
+            self.assertEqual(document.mime_type, "text/markdown")
+            self.assertTrue(document.storage_uri.startswith("local://"))
+            self.assertEqual(documents.get_document(document.id), document)
+            self.assertEqual(job.document_id, document.id)
+            self.assertIn(job.id, queue.jobs)
+
+    def test_dev_vector_repository_supports_keyword_smoke_search(self) -> None:
+        repo = InMemoryVectorRepository()
+        chunk = DocumentChunk(
+            document_id="doc-1",
+            seq=0,
+            start_pos=0,
+            end_pos=32,
+            content="RRF fusion improves hybrid retrieval.",
+        )
+
+        repo.upsert_chunks([chunk])
+        results = repo.search("hybrid")
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].chunk_id, chunk.id)
+        self.assertEqual(results[0].source, "dev-keyword")
 
 
 if __name__ == "__main__":
