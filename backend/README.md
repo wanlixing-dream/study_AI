@@ -16,6 +16,15 @@ uvicorn app.main:app --reload
 
 Open `http://127.0.0.1:8001/health`.
 
+Useful Phase A endpoints:
+
+```http
+GET  /health
+GET  /v1/health
+POST /v1/uploads
+GET  /v1/jobs/{job_id}
+```
+
 ## Verify
 
 ```bash
@@ -32,6 +41,7 @@ python -m unittest discover -s tests
 - Phase A PostgreSQL/pgvector migration draft in `migrations/001_phase_a_pgvector.sql`.
 - Local development adapters for file storage, in-memory repositories, and ingestion queue.
 - Upload acceptance service that stores bytes, creates document metadata, and enqueues ingestion.
+- Upload and job API routes backed by development adapters.
 
 ## Next Backend Steps
 
@@ -39,4 +49,4 @@ python -m unittest discover -s tests
 2. Add ingestion worker execution for parse, chunk, embedding, and candidate generation.
 3. Add LearningAgent REST adapter with mocked tests first.
 4. Add retrieval service with full-text recall, pgvector recall, and RRF fusion.
-5. Add upload and job API routes.
+5. Add frontend upload center UI that calls the backend upload/job endpoints.
