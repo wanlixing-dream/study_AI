@@ -10,6 +10,7 @@ from app.domain.models import (
     KnowledgeCandidate,
     MemoryEvent,
     RetrievalResult,
+    ReviewStatus,
 )
 
 
@@ -55,8 +56,20 @@ class MemoryRepositoryPort(Protocol):
     def add_memory(self, memory: AgentMemory) -> AgentMemory:
         """Persist accepted or candidate memory."""
 
+    def get_memory(self, memory_id: str) -> AgentMemory | None:
+        """Read memory by ID."""
+
+    def list_memories(self) -> list[AgentMemory]:
+        """Return stored memories."""
+
+    def update_memory_status(self, memory_id: str, status: ReviewStatus) -> AgentMemory:
+        """Update memory review status."""
+
     def append_event(self, event: MemoryEvent) -> MemoryEvent:
         """Persist memory lifecycle events."""
+
+    def list_events(self, memory_id: str | None = None) -> list[MemoryEvent]:
+        """Return memory lifecycle events."""
 
 
 class LearningAgentPort(Protocol):

@@ -1,8 +1,27 @@
 from fastapi import APIRouter, File, HTTPException, Query, UploadFile
+from pydantic import BaseModel, Field
 
 from app.dependencies import AppContainer
-from app.domain.models import DocumentRecord, IngestionJob, KnowledgeCandidate, RetrievalResult
+from app.domain.models import AgentMemory, DocumentRecord, IngestionJob, KnowledgeCandidate, MemoryEvent, RetrievalResult, ReviewStatus
 from app.services.ingestion_worker import IngestionResourceNotFoundError, IngestionValidationError
+from app.services.memory import MemoryNotFoundError, MemoryValidationError
+
+
+class MemoryCreateRequest(BaseModel):
+    content: str = Field(min_length=1)
+    scope: str = Field(default="learning", min_length=1)
+    memoryType: str = Field(default="insight", min_length=1)
+    entities: list[str] = Field(default_factory=list)
+    importance: float = Field(default=0.5, ge=0.0, le=1.0)
+    confidence: float = Field(default=0.5, ge=0.0, le=1.0)
+    sourceText: str = ""
+    actor: str = "system"
+
+
+class MemoryReviewRequest(BaseModel):
+    status: ReviewStatus
+    reason: str = ""
+    actor: str = "system"
 
 
 def serialize_document(document: DocumentRecord) -> dict:
@@ -54,6 +73,33 @@ def serialize_retrieval_result(result: RetrievalResult) -> dict:
         "score": result.score,
         "source": result.source,
         "metadata": result.metadata,
+    }
+
+
+def serialize_memory(memory: AgentMemory) -> dict:
+    return {
+        "id": memory.id,
+        "ownerId": memory.owner_id,
+        "scope": memory.scope,
+        "memoryType": memory.memory_type,
+        "content": memory.content,
+        "entities": list(memory.entities),
+        "importance": memory.importance,
+        "confidence": memory.confidence,
+        "status": memory.status.value,
+        "createdAt": memory.created_at.isoformat(),
+    }
+
+
+def serialize_memory_event(event: MemoryEvent) -> dict:
+    return {
+        "id": event.id,
+        "memoryId": event.memory_id,
+        "action": event.action.value,
+        "reason": event.reason,
+        "actor": event.actor,
+        "sourceText": event.source_text,
+        "createdAt": event.created_at.isoformat(),
     }
 
 
@@ -117,5 +163,45 @@ def create_router(container: AppContainer) -> APIRouter:
             "query": query,
             "results": [serialize_retrieval_result(result) for result in results],
         }
+
+    @router.post("/memories")
+    def create_memory(request: MemoryCreateRequest) -> dict:
+        try:
+            memory, event = container.memory.propose_memory(
+                content=request.content,
+                scope=request.scope,
+                memory_type=request.memoryType,
+                entities=tuple(request.entities),
+                importance=request.importance,
+                confidence=request.confidence,
+                source_text=request.sourceText,
+                actor=request.actor,
+            )
+        except MemoryValidationError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return {"memory": serialize_memory(memory), "event": serialize_memory_event(event)}
+
+    @router.get("/memories")
+    def list_memories() -> dict:
+        return {"memories": [serialize_memory(memory) for memory in container.memories.list_memories()]}
+
+    @router.post("/memories/{memory_id}/review")
+    def review_memory(memory_id: str, request: MemoryReviewRequest) -> dict:
+        try:
+            memory, event = container.memory.review_memory(
+                memory_id=memory_id,
+                status=request.status,
+                reason=request.reason,
+                actor=request.actor,
+            )
+        except MemoryNotFoundError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except MemoryValidationError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return {"memory": serialize_memory(memory), "event": serialize_memory_event(event)}
+
+    @router.get("/memories/events")
+    def list_memory_events(memory_id: str | None = None) -> dict:
+        return {"events": [serialize_memory_event(event) for event in container.memories.list_events(memory_id)]}
 
     return router

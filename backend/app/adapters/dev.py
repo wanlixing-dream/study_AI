@@ -12,6 +12,7 @@ from app.domain.models import (
     KnowledgeCandidate,
     MemoryEvent,
     RetrievalResult,
+    ReviewStatus,
 )
 
 
@@ -120,6 +121,23 @@ class InMemoryMemoryRepository:
         self.memories[memory.id] = memory
         return memory
 
+    def get_memory(self, memory_id: str) -> AgentMemory | None:
+        return self.memories.get(memory_id)
+
+    def list_memories(self) -> list[AgentMemory]:
+        return list(self.memories.values())
+
+    def update_memory_status(self, memory_id: str, status: ReviewStatus) -> AgentMemory:
+        memory = self.memories[memory_id]
+        updated = replace(memory, status=status)
+        self.memories[memory_id] = updated
+        return updated
+
     def append_event(self, event: MemoryEvent) -> MemoryEvent:
         self.events.append(event)
         return event
+
+    def list_events(self, memory_id: str | None = None) -> list[MemoryEvent]:
+        if memory_id is None:
+            return list(self.events)
+        return [event for event in self.events if event.memory_id == memory_id]

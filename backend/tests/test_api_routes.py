@@ -88,6 +88,36 @@ class ApiRouteTests(unittest.TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_memory_routes_create_review_and_list_events(self) -> None:
+        client = TestClient(create_app())
+
+        create_response = client.post(
+            "/v1/memories",
+            json={
+                "content": "Use pgvector before adopting a dedicated vector database.",
+                "scope": "backend",
+                "memoryType": "technical_decision",
+                "entities": ["pgvector", "PostgreSQL"],
+                "importance": 0.8,
+                "confidence": 0.7,
+                "actor": "tester",
+            },
+        )
+        memory_id = create_response.json()["memory"]["id"]
+        review_response = client.post(
+            f"/v1/memories/{memory_id}/review",
+            json={"status": "approved", "reason": "Durable implementation direction.", "actor": "tester"},
+        )
+        list_response = client.get("/v1/memories")
+        events_response = client.get("/v1/memories/events", params={"memory_id": memory_id})
+
+        self.assertEqual(create_response.status_code, 200)
+        self.assertEqual(create_response.json()["memory"]["status"], "candidate")
+        self.assertEqual(review_response.status_code, 200)
+        self.assertEqual(review_response.json()["memory"]["status"], "approved")
+        self.assertEqual(len(list_response.json()["memories"]), 1)
+        self.assertEqual(len(events_response.json()["events"]), 2)
+
 
 if __name__ == "__main__":
     unittest.main()

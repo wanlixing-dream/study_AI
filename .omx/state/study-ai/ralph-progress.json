@@ -75,8 +75,16 @@
     {
       "id": "M5",
       "name": "Memory System",
-      "status": "pending",
-      "globalRole": "Persist learning memory and durable insights with review gates."
+      "status": "completed-local-memory-review",
+      "globalRole": "Persist learning memory and durable insights with review gates.",
+      "completedEvidence": [
+        "backend/app/services/memory.py creates candidate memories and lifecycle events",
+        "POST /v1/memories and GET /v1/memories expose local memory records",
+        "POST /v1/memories/{memory_id}/review updates memory review status",
+        "GET /v1/memories/events exposes audit events",
+        "backend/tests/test_memory_service.py and backend/tests/test_api_routes.py cover memory behavior"
+      ],
+      "nextAction": "Add PostgreSQL memory persistence and LearningAgent-derived memory proposals in later modules."
     },
     {
       "id": "M6",
@@ -124,11 +132,12 @@
       "User wanted PostgreSQL/JVM/high-scale direction preserved: module map includes M2 PostgreSQL Persistence, M10 Scale Practice Lab, and M11 JVM Companion Learning.",
       "M2 completed the documents/jobs PostgreSQL adapter slice while leaving live DB validation opt-in behind credentials.",
       "M3 completed the markdown/txt local ingestion worker slice while keeping approval in M7.",
-      "M4 completed the local keyword retrieval boundary while deferring PostgreSQL full-text, pgvector dense recall, and RRF fusion."
+      "M4 completed the local keyword retrieval boundary while deferring PostgreSQL full-text, pgvector dense recall, and RRF fusion.",
+      "M5 completed local candidate memory creation, review status updates, and lifecycle event auditing."
     ],
     "verificationEvidence": [
       "python -m compileall -q app tests: exit 0",
-      "python -m unittest discover -s tests: 24 tests OK, 1 skipped live DB test",
+      "python -m unittest discover -s tests: 29 tests OK, 1 skipped live DB test",
       "M2 architect verification: APPROVED",
       "M3 architect second-pass verification: APPROVED",
       "AI slop cleaner scoped scan found no masking fallback-like code in changed files"

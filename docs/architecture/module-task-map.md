@@ -36,7 +36,7 @@ flowchart LR
 | M2 | PostgreSQL Persistence | Turns local demo state into durable deployable state. | `backend/app/adapters`, `backend/migrations` | Completed for documents/jobs |
 | M3 | Ingestion Worker | Converts uploaded materials into parsed chunks, embeddings, and candidate knowledge. | `backend/app/services`, worker runtime | Completed for markdown/txt local worker |
 | M4 | Retrieval And RAG | Makes stored knowledge searchable for agents and users. | retrieval service, pgvector, text search | Completed for local keyword search |
-| M5 | Memory System | Stores durable personal/project memories with review and audit events. | memory service, memory tables | Pending |
+| M5 | Memory System | Stores durable personal/project memories with review and audit events. | memory service, memory tables | Completed for local memory review |
 | M6 | LearningAgent Adapter | Reuses `learningAgent` through a service boundary. | adapter, contract tests | Pending |
 | M7 | Candidate Review And Graph Writeback | Prevents unreviewed AI output from entering the approved graph. | candidate service, graph repository | Pending |
 | M8 | Frontend Workflows | Makes upload, job status, review, retrieval, and graph updates usable. | `src/` | Pending |
@@ -216,6 +216,21 @@ M5 stores durable memories and learning state without letting noisy AI output po
 ### Done When
 
 - Memories can be proposed, judged, approved, rejected, and audited.
+
+### Current Evidence
+
+- `backend/app/services/memory.py` creates candidate memories and review events.
+- `POST /v1/memories` creates candidate memories.
+- `GET /v1/memories` lists memories.
+- `POST /v1/memories/{memory_id}/review` updates memory review status.
+- `GET /v1/memories/events` lists memory lifecycle events.
+- `backend/tests/test_memory_service.py` and `backend/tests/test_api_routes.py` cover memory creation, review, missing-memory errors, and event listing.
+
+### Remaining M5 Work
+
+- Add PostgreSQL memory repositories.
+- Add extraction/judgment rules inspired by BestCowork-GA guard levels.
+- Connect memory candidates to LearningAgent-derived insights in M6.
 
 ## M6: LearningAgent Adapter
 
